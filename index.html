@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Basketball scoreboard</title>
+<title>Koripallon tulostaulu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -52,10 +52,10 @@ button{cursor:pointer;touch-action:manipulation}
 .tname{font-weight:600;font-size:max(13px,3.4cqi);line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-bottom:.6cqi;border-bottom:.7cqi solid var(--c)}
 .home-b{--c:var(--home)} .away-b{--c:var(--away)}
 .score{font-weight:700;font-size:10.5cqi;white-space:nowrap;line-height:1;margin-top:1cqi;color:var(--led-white)}
-.meta{display:flex;gap:2.4cqi;align-items:flex-start;margin-top:1cqi;font-size:max(11px,2.3cqi);color:#B9B6AC}
+.meta{display:flex;gap:1.6cqi;align-items:flex-start;margin-top:1cqi;font-size:max(11px,1.9cqi);color:#B9B6AC}
 .meta > div{display:flex;flex-direction:column;align-items:center;gap:.4cqi}
 .fnum{font-weight:700;font-size:max(18px,5.4cqi);line-height:1;color:var(--led)}
-.bonus{font-weight:700;font-size:max(10px,1.9cqi);padding:.1em .5em;border-radius:.3em;background:var(--led-off);color:#5c5c5c}
+.bonus{font-weight:700;font-size:max(9px,1.5cqi);padding:.1em .5em;border-radius:.3em;background:var(--led-off);color:#5c5c5c}
 .bonus.on{background:var(--led-red);color:#000}
 .dots{display:flex;gap:.9cqi;height:max(18px,5.4cqi);align-items:center}
 .dot{width:max(9px,1.8cqi);height:max(9px,1.8cqi);border-radius:50%;background:var(--led)}
@@ -87,6 +87,9 @@ button{cursor:pointer;touch-action:manipulation}
 .clockwrap{position:relative}
 .stopball{position:absolute;left:100%;top:50%;margin-left:.45cqi;transform:translateY(-50%);width:max(8px,1.8cqi);height:max(8px,1.8cqi);border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8A80,#FF3B2F 60%,#B81E14);box-shadow:0 0 1.2cqi rgba(255,59,47,.6);visibility:hidden}
 .stopball.on{visibility:visible}
+.board{transition:box-shadow .4s}
+.board.endgame{box-shadow:inset 0 0 0 .6cqi var(--led-red),0 0 3cqi rgba(255,59,47,.35)}
+.board.endgame .gclock{color:var(--led-red);text-shadow:0 0 2cqi rgba(255,74,61,.4)}
 .home-p{--c:var(--home)} .away-p{--c:var(--away)}
 .exit-display{display:none}
 
@@ -203,23 +206,23 @@ body.screen{cursor:default}
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>Scoreboard</h1>
+    <h1>Tulostaulu</h1>
     <div class="top-actions">
-      <button class="btn small" id="popBtn">Open display window</button>
-      <button class="btn small" id="displayBtn">Fullscreen here</button>
-      <button class="btn small" id="settingsBtn">Settings</button>
+      <button class="btn small" id="popBtn">Avaa näyttöikkuna</button>
+      <button class="btn small" id="displayBtn">Koko näyttö tässä</button>
+      <button class="btn small" id="settingsBtn">Asetukset</button>
     </div>
   </header>
 
   <div class="board-wrap">
-    <div class="board" role="region" aria-label="Scoreboard">
+    <div class="board" role="region" aria-label="Tulostaulu">
       <div class="plist home-p" id="b-home-players"></div>
       <div class="team-b home-b">
         <div class="tname" id="b-home-name"></div>
         <div class="score" id="b-home-score" aria-live="polite"></div>
         <div class="meta">
-          <div><span>Fouls</span><span class="fnum" id="b-home-fouls"></span><span class="bonus" id="b-home-bonus">Bonus</span></div>
-          <div><span>Timeouts</span><span class="dots" id="b-home-to"></span></div>
+          <div><span>Virheet</span><span class="fnum" id="b-home-fouls"></span><span class="bonus" id="b-home-bonus">Vapaaheitot</span></div>
+          <div><span>Aikalisät</span><span class="dots" id="b-home-to"></span></div>
         </div>
       </div>
       <div class="mid">
@@ -232,103 +235,103 @@ body.screen{cursor:default}
         <div class="tname" id="b-away-name"></div>
         <div class="score" id="b-away-score" aria-live="polite"></div>
         <div class="meta">
-          <div><span>Fouls</span><span class="fnum" id="b-away-fouls"></span><span class="bonus" id="b-away-bonus">Bonus</span></div>
-          <div><span>Timeouts</span><span class="dots" id="b-away-to"></span></div>
+          <div><span>Virheet</span><span class="fnum" id="b-away-fouls"></span><span class="bonus" id="b-away-bonus">Vapaaheitot</span></div>
+          <div><span>Aikalisät</span><span class="dots" id="b-away-to"></span></div>
         </div>
       </div>
       <div class="plist away-p" id="b-away-players"></div>
     </div>
-    <button class="exit-display" id="exitDisplay">Exit display</button>
+    <button class="exit-display" id="exitDisplay">Poistu näytöstä</button>
   </div>
 
   <section class="controls" id="controls">
     <div class="panel clockpanel">
-      <button class="startbtn" id="startBtn" data-act="clock">Start clock</button>
-      <p class="sub">Game clock</p>
+      <button class="startbtn" id="startBtn" data-act="clock">Käynnistä kello</button>
+      <p class="sub">Pelikello</p>
       <div class="row r4">
         <button class="btn" data-act="adj" data-ms="-60000">−1 min</button>
         <button class="btn" data-act="adj" data-ms="-1000">−1 s</button>
         <button class="btn" data-act="adj" data-ms="1000">+1 s</button>
         <button class="btn" data-act="adj" data-ms="60000">+1 min</button>
       </div>
-      <p class="sub" id="shotSub">Shot clock</p>
+      <p class="sub" id="shotSub">Heittokello</p>
       <div class="row r2" id="shotRow">
-        <button class="btn" data-act="shot" data-s="24">Reset 24</button>
-        <button class="btn" data-act="shot" data-s="14">Reset 14</button>
+        <button class="btn" data-act="shot" data-s="24">Palauta 24</button>
+        <button class="btn" data-act="shot" data-s="14">Palauta 14</button>
       </div>
-      <p class="sub">Game</p>
+      <p class="sub">Peli</p>
       <div class="row r2">
-        <button class="btn" data-act="next" id="nextBtn">Next period</button>
-        <button class="btn" data-act="arrow" id="arrowBtn">Arrow</button>
+        <button class="btn" data-act="next" id="nextBtn">Seuraava jakso</button>
+        <button class="btn" data-act="arrow" id="arrowBtn">Aseta nuoli</button>
       </div>
-      <button class="btn" data-act="undo" id="undoBtn">Undo</button>
+      <button class="btn" data-act="undo" id="undoBtn">Kumoa</button>
     </div>
     <div class="panel team-panel" data-team="home"></div>
     <div class="panel team-panel" data-team="away"></div>
   </section>
 
-  <p class="keys">Keys: <kbd>Space</kbd> start/stop clock, <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> home points, <kbd>8</kbd><kbd>9</kbd><kbd>0</kbd> away points, <kbd>S</kbd> shot clock 24, <kbd>D</kbd> shot clock 14, <kbd>Z</kbd> undo, <kbd>F</kbd> fullscreen here.</p>
-  <p class="keys">Display window not opening? Open this scoreboard’s link in another browser window and add <kbd>#display</kbd> to the end of the address. If you reload this control page, press Open display window again.</p>
+  <p class="keys">Pikanäppäimet: <kbd>Välilyönti</kbd> kello käyntiin/seis, <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> kotijoukkueen pisteet, <kbd>8</kbd><kbd>9</kbd><kbd>0</kbd> vierasjoukkueen pisteet, <kbd>S</kbd> heittokello 24, <kbd>D</kbd> heittokello 14, <kbd>Z</kbd> kumoa, <kbd>A</kbd> käännä nuoli, <kbd>F</kbd> koko näyttö tässä.</p>
+  <p class="keys">Eikö näyttöikkuna aukea? Avaa tämän tulostaulun linkki toiseen selainikkunaan ja lisää osoitteen loppuun <kbd>#display</kbd>. Jos lataat tämän ohjaussivun uudelleen, paina Avaa näyttöikkuna uudestaan.</p>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <dialog id="settings" aria-labelledby="setTitle">
   <div class="dlg-body">
-    <h2 id="setTitle">Settings</h2>
-    <h3>Teams</h3>
+    <h2 id="setTitle">Asetukset</h2>
+    <h3>Joukkueet</h3>
     <div class="fields">
-      <label class="field">Home name<input id="s-home-name" maxlength="24"></label>
-      <label class="field">Home color<input type="color" id="s-home-color"></label>
-      <label class="field full">Home player numbers<input id="s-home-roster" placeholder="4, 5, 6, 7"></label>
-      <label class="field">Away name<input id="s-away-name" maxlength="24"></label>
-      <label class="field">Away color<input type="color" id="s-away-color"></label>
-      <label class="field full">Away player numbers<input id="s-away-roster" placeholder="4, 5, 6, 7"></label>
+      <label class="field">Kotijoukkueen nimi<input id="s-home-name" maxlength="24"></label>
+      <label class="field">Kotijoukkueen väri<input type="color" id="s-home-color"></label>
+      <label class="field full">Kotijoukkueen pelinumerot<input id="s-home-roster" placeholder="4, 5, 6, 7"></label>
+      <label class="field">Vierasjoukkueen nimi<input id="s-away-name" maxlength="24"></label>
+      <label class="field">Vierasjoukkueen väri<input type="color" id="s-away-color"></label>
+      <label class="field full">Vierasjoukkueen pelinumerot<input id="s-away-roster" placeholder="4, 5, 6, 7"></label>
     </div>
-    <h3>Game</h3>
+    <h3>Peli</h3>
     <div class="fields">
-      <label class="field">Period length
+      <label class="field">Jakson pituus
         <select id="s-plen">
           <option value="5">5 min</option><option value="6">6 min</option><option value="7">7 min</option>
           <option value="8">8 min</option><option value="10">10 min</option><option value="12">12 min</option>
-          <option value="custom">Custom</option>
+          <option value="custom">Muu</option>
         </select>
       </label>
-      <label class="field" id="customWrap">Custom length (min)<input type="number" id="s-plen-custom" min="1" max="60" step="0.5"></label>
-      <label class="field">Periods
-        <select id="s-periods"><option value="4">4 quarters</option><option value="2">2 halves</option></select>
+      <label class="field" id="customWrap">Muu pituus (min)<input type="number" id="s-plen-custom" min="1" max="60" step="0.5"></label>
+      <label class="field">Jaksot
+        <select id="s-periods"><option value="4">4 neljännestä</option><option value="2">2 puoliaikaa</option></select>
       </label>
-      <label class="field">Overtime length (min)<input type="number" id="s-ot" min="1" max="20" step="0.5"></label>
-      <label class="field">Timeouts
-        <select id="s-tomode"><option value="fiba">FIBA: 2 first half, 3 second half</option><option value="game">Fixed number per game</option></select>
+      <label class="field">Jatkoajan pituus (min)<input type="number" id="s-ot" min="1" max="20" step="0.5"></label>
+      <label class="field">Aikalisät
+        <select id="s-tomode"><option value="fiba">FIBA: 2 ensimmäisellä, 3 toisella puoliajalla</option><option value="game">Kiinteä määrä per peli</option></select>
       </label>
-      <label class="field" id="toWrap">Timeouts per game<input type="number" id="s-topg" min="0" max="10"></label>
-      <label class="field">Free throws from team foul number<input type="number" id="s-bonus" min="1" max="15"></label>
-      <label class="field">Player fouls out at<input type="number" id="s-foulout" min="1" max="10"></label>
-      <label class="field check"><input type="checkbox" id="s-shot"> Use shot clock</label>
-      <label class="field check"><input type="checkbox" id="s-sound"> Buzzer sound</label>
+      <label class="field" id="toWrap">Aikalisiä per peli<input type="number" id="s-topg" min="0" max="10"></label>
+      <label class="field">Vapaaheitot joukkuevirheestä nro<input type="number" id="s-bonus" min="1" max="15"></label>
+      <label class="field">Pelaaja ulos virheillä<input type="number" id="s-foulout" min="1" max="10"></label>
+      <label class="field check"><input type="checkbox" id="s-shot"> Käytä heittokelloa</label>
+      <label class="field check"><input type="checkbox" id="s-sound"> Summeri</label>
     </div>
-    <p class="hint">Each overtime gets 1 timeout. Team fouls reset each period and carry into overtime. A new period length takes effect at the next period, or right away if the game hasn’t started.</p>
+    <p class="hint">Jokaisessa jatkoajassa on 1 aikalisä. Joukkuevirheet nollautuvat jokaisen jakson alussa ja jatkuvat jatkoajalle. Uusi jakson pituus tulee voimaan seuraavasta jaksosta, tai heti, jos peli ei ole vielä alkanut.</p>
   </div>
   <div class="dlg-foot">
-    <button class="btn danger" id="newGameBtn">New game</button>
+    <button class="btn danger" id="newGameBtn">Uusi peli</button>
     <div class="right">
-      <button class="btn" id="cancelSet">Cancel</button>
-      <button class="btn primary" id="saveSet">Save</button>
+      <button class="btn" id="cancelSet">Peruuta</button>
+      <button class="btn primary" id="saveSet">Tallenna</button>
     </div>
   </div>
 </dialog>
 
 <dialog id="rosterDlg" aria-labelledby="rosterTitle">
   <div class="dlg-body">
-    <h2 id="rosterTitle">Players</h2>
-    <p class="hint" style="margin:0 0 10px">Tap the numbers playing in this game.</p>
+    <h2 id="rosterTitle">Pelaajat</h2>
+    <p class="hint" style="margin:0 0 10px">Valitse tässä pelissä pelaavat numerot.</p>
     <div class="numgrid" id="numGrid"></div>
-    <label class="field full" style="margin-top:12px">Or type the numbers, separated by commas<input id="rosterText" inputmode="numeric"></label>
+    <label class="field full" style="margin-top:12px">Tai kirjoita numerot pilkuilla erotettuina<input id="rosterText" inputmode="numeric"></label>
   </div>
   <div class="dlg-foot">
-    <button class="btn" id="rosterClear">Clear all</button>
-    <div class="right"><button class="btn" id="rosterCancel">Cancel</button><button class="btn primary" id="rosterSave">Save</button></div>
+    <button class="btn" id="rosterClear">Tyhjennä</button>
+    <div class="right"><button class="btn" id="rosterCancel">Peruuta</button><button class="btn primary" id="rosterSave">Tallenna</button></div>
   </div>
 </dialog>
 
@@ -340,8 +343,8 @@ const $=id=>document.getElementById(id);
 const DEF_ROSTER='4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15';
 
 function defCfg(){return{
-  home:{name:'Home',color:'#2B6DE8',roster:DEF_ROSTER},
-  away:{name:'Away',color:'#E2462F',roster:DEF_ROSTER},
+  home:{name:'Koti',color:'#2B6DE8',roster:DEF_ROSTER},
+  away:{name:'Vieras',color:'#E2462F',roster:DEF_ROSTER},
   periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true
 };}
 function periodLen(p,c){c=c||CFG;return Math.round((p<=c.periods?c.periodMin:c.otMin)*60000);}
@@ -382,7 +385,7 @@ function stopClock(){if(!S.clock.running)return;const g=gameLeft(),s=shotLeft();
 function rebase(){const g=gameLeft(),s=shotLeft(),t=now();S.clock.base=g;S.shot.base=s;S.clock.startedAt=t;S.shot.startedAt=t;}
 function toggleClock(){
   if(S.clock.running){stopClock();commit();return;}
-  if(gameLeft()<=0){toast('The period is over. Tap Next period.');return;}
+  if(gameLeft()<=0){toast('Jakso on päättynyt. Paina Seuraava jakso.');return;}
   const t=now();S.clock.running=true;S.clock.startedAt=t;S.shot.startedAt=t;commit();
 }
 function adjustClock(ms){rebase();S.clock.base=Math.min(periodLen(S.period),Math.max(0,S.clock.base+ms));commit();}
@@ -399,7 +402,7 @@ function fmtShot(ms){
 function seg(str){return String(str).replace(/./g,c=>/\d/.test(c)?'<span class="dg">'+c+'</span>':'<span class="sp">'+c+'</span>');}
 
 /* ---------- Periods & timeouts ---------- */
-function periodName(p){p=p||S.period;if(p>CFG.periods)return 'Overtime '+(p-CFG.periods);return (CFG.periods===2?'Half ':'Period ')+p;}
+function periodName(p){p=p||S.period;if(p>CFG.periods)return 'Jatkoaika '+(p-CFG.periods);return (CFG.periods===2?'Puoliaika ':'Jakso ')+p;}
 function segOf(p){if(p>CFG.periods)return 'ot'+p;if(CFG.toMode==='game')return 'reg';return p<=CFG.periods/2?'h1':'h2';}
 function allowance(sg){if(sg.startsWith('ot'))return 1;if(sg==='reg')return CFG.toPerGame;return sg==='h1'?2:3;}
 function inLast2(){return CFG.toMode==='fiba'&&S.period===CFG.periods&&gameLeft()<=120000;}
@@ -412,7 +415,7 @@ function undo(){
   const h=H.pop();if(!h)return;
   const prev=JSON.parse(h.snap);
   if(!h.clock){prev.clock=S.clock;prev.shot=S.shot;}
-  S=prev;toast('Undone: '+h.label);commit();
+  S=prev;toast('Kumottu: '+h.label);commit();
 }
 
 /* ---------- Actions ---------- */
@@ -423,28 +426,28 @@ function addPts(t,n){
   S.score[t]=Math.max(0,S.score[t]+n);commit();
 }
 function foul(t,p){
-  pushHist(p?'Foul #'+p+' '+nm(t):'Foul '+nm(t));
+  pushHist(p?'Virhe #'+p+' '+nm(t):'Virhe '+nm(t));
   S.teamFouls[t]++;
-  if(p){const n=(S.players[t][p]||0)+1;S.players[t][p]=n;if(n===CFG.foulOut)toast('#'+p+' '+nm(t)+' has '+n+' fouls and is out');}
-  if(S.teamFouls[t]===CFG.bonus-1)toast(nm(t)+' is in the bonus');
+  if(p){const n=(S.players[t][p]||0)+1;S.players[t][p]=n;if(n===CFG.foulOut)toast('#'+p+' '+nm(t)+': '+n+' virhettä, ulos pelistä');}
+  if(S.teamFouls[t]===CFG.bonus-1)toast(nm(t)+': seuraavasta virheestä vapaaheitot');
   commit();
 }
 function timeout(t){
-  if(toLeft(t)<=0){toast(nm(t)+' has no timeouts left');return;}
-  pushHist('Timeout '+nm(t));
+  if(toLeft(t)<=0){toast(nm(t)+': ei aikalisiä jäljellä');return;}
+  pushHist('Aikalisä '+nm(t));
   stopClock();const l2=inLast2();S.to[t].used++;if(l2)S.to[t].last2++;
-  toast('Timeout '+nm(t));commit();
+  toast('Aikalisä '+nm(t));commit();
 }
 function nextPeriod(){
-  pushHist('Next period',true);
+  pushHist('Seuraava jakso',true);
   stopClock();const old=segOf(S.period);S.period++;
   if(S.period<=CFG.periods)S.teamFouls={home:0,away:0};
   if(segOf(S.period)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(S.period);S.shot.base=24000;
   toast(periodName());commit();
 }
-function flipArrow(){pushHist('Arrow');S.arrow=S.arrow==='home'?'away':'home';commit();}
-function newGame(){H=[];S=defState(CFG);commit();toast('New game');}
+function flipArrow(){pushHist('Nuoli');S.arrow=S.arrow==='home'?'away':'home';commit();}
+function newGame(){H=[];S=defState(CFG);commit();toast('Uusi peli');}
 
 /* ---------- Buzzer ---------- */
 let actx=null;
@@ -484,13 +487,13 @@ function renderBoard(doc){
     let h='';for(let i=0;i<S.to[t].used;i++)h+='<span class="ball to-ball"></span>';
     g('b-'+t+'-to').innerHTML=h;
     const nums=roster(t);
-    g('b-'+t+'-players').innerHTML='<div class="plist-h">Player fouls</div>'+nums.map(p=>{
+    g('b-'+t+'-players').innerHTML='<div class="plist-h">Pelaajavirheet</div>'+nums.map(p=>{
       const f=S.players[t][p]||0;
       let bl='';for(let i=1;i<=f;i++)bl+='<span class="ball'+(i>=CFG.foulOut?' red':'')+'"></span>';
-      return '<div class="prow '+foulClass(f)+'" aria-label="Number '+p+', '+f+' fouls"><span class="pn">#'+p+'</span><span class="balls">'+bl+'</span></div>';
+      return '<div class="prow '+foulClass(f)+'" aria-label="Numero '+p+', virheitä '+f+'"><span class="pn">#'+p+'</span><span class="balls">'+bl+'</span></div>';
     }).join('');
   });
-  g('b-period').textContent=isFinal()?'Final':periodName();
+  g('b-period').textContent=isFinal()?'Lopputulos':periodName();
   const ar=g('b-arrow');ar.classList.toggle('set',!!S.arrow);ar.classList.toggle('left',S.arrow==='home');
   doc.__c={};drawBoard(doc);
 }
@@ -503,24 +506,26 @@ function drawBoard(doc){
   if(ss!==c.s){sh.innerHTML=seg(ss);sh.classList.toggle('off',!shown);c.s=ss;}
   const sb=doc.getElementById('b-stop');
   if(sb&&c.r!==S.clock.running){sb.classList.toggle('on',!S.clock.running);c.r=S.clock.running;}
+  const eg=S.period>=CFG.periods&&gm>0&&gm<=120000;
+  if(c.eg!==eg){const bd=doc.querySelector('.board');if(bd)bd.classList.toggle('endgame',eg);c.eg=eg;}
 }
 
 function buildTeamPanels(){
   document.querySelectorAll('.team-panel').forEach(el=>{
     const t=el.dataset.team;
     el.innerHTML=
-      '<h2 class="tp-head"><span class="swatch"></span><input class="tp-name" data-team="'+t+'" maxlength="24" aria-label="Team name" title="Tap to rename"><span class="tp-score"></span></h2>'+
+      '<h2 class="tp-head"><span class="swatch"></span><input class="tp-name" data-team="'+t+'" maxlength="24" aria-label="Joukkueen nimi" title="Nimeä uudelleen napauttamalla"><span class="tp-score"></span></h2>'+
       '<div class="row r4 pts">'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="1">+1</button>'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="2">+2</button>'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="3">+3</button>'+
-        '<button class="btn minus" data-act="pts" data-team="'+t+'" data-n="-1" aria-label="Remove 1 point">−1</button>'+
+        '<button class="btn minus" data-act="pts" data-team="'+t+'" data-n="-1" aria-label="Poista 1 piste">−1</button>'+
       '</div>'+
       '<div class="row r2">'+
-        '<button class="btn" data-act="to" data-team="'+t+'">Timeout<span class="to-left"></span></button>'+
-        '<button class="btn" data-act="foul" data-team="'+t+'">Foul, no player<span class="to-left fouls-left"></span></button>'+
+        '<button class="btn" data-act="to" data-team="'+t+'">Aikalisä<span class="to-left"></span></button>'+
+        '<button class="btn" data-act="foul" data-team="'+t+'">Virhe, ei pelaajaa<span class="to-left fouls-left"></span></button>'+
       '</div>'+
-      '<div class="plabel"><span class="plabel-t">Player fouls: tap a number to add</span><span class="plabel-b"><button class="btn small rm-btn" data-act="rmfoul" data-team="'+t+'">Remove foul</button><button class="btn small" data-act="roster" data-team="'+t+'">Edit players</button></span></div>'+
+      '<div class="plabel"><span class="plabel-t">Pelaajavirheet: lisää napauttamalla numeroa</span><span class="plabel-b"><button class="btn small rm-btn" data-act="rmfoul" data-team="'+t+'">Poista virhe</button><button class="btn small" data-act="roster" data-team="'+t+'">Muokkaa pelaajia</button></span></div>'+
       '<div class="players"></div>';
   });
 }
@@ -534,19 +539,19 @@ function renderAll(){
     const panel=document.querySelector('.team-panel[data-team="'+t+'"]');
     const ni=panel.querySelector('.tp-name');if(document.activeElement!==ni)ni.value=CFG[t].name;
     panel.querySelector('.tp-score').textContent=S.score[t];
-    panel.querySelector('.fouls-left').textContent='Team fouls: '+S.teamFouls[t];
-    panel.querySelector('[data-act="to"] .to-left').textContent=toLeft(t)+' left';
+    panel.querySelector('.fouls-left').textContent='Joukkuevirheet: '+S.teamFouls[t];
+    panel.querySelector('[data-act="to"] .to-left').textContent=toLeft(t)+' jäljellä';
     const pl=panel.querySelector('.players'),nums=roster(t);
     pl.innerHTML=nums.length?nums.map(p=>{
       const f=S.players[t][p]||0,fc=foulClass(f);
       const cls=fc==='out'||fc==='warn'?' '+fc:'';
       let dots='';for(let i=0;i<CFG.foulOut;i++)dots+='<i'+(i<f?(i>=CFG.foulOut-1?' class="f r"':' class="f"'):'')+'></i>';
-      return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Foul on number '+p+', '+f+' fouls"><span class="num">#'+p+'</span><span class="pf">'+dots+'</span></button>';
-    }).join(''):'<span class="empty-roster">Add player numbers in Settings.</span>';
+      return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Virhe numerolle '+p+', virheitä '+f+'"><span class="num">#'+p+'</span><span class="pf">'+dots+'</span></button>';
+    }).join(''):'<span class="empty-roster">Lisää pelinumerot kohdasta Muokkaa pelaajia.</span>';
   });
-  $('arrowBtn').textContent=S.arrow?'Arrow: '+nm(S.arrow):'Set arrow';
-  $('nextBtn').textContent=S.period>=CFG.periods?'Start overtime':'Next period';
-  const u=H[H.length-1];$('undoBtn').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
+  $('arrowBtn').textContent=S.arrow?'Nuoli: '+nm(S.arrow):'Aseta nuoli';
+  $('nextBtn').textContent=S.period>=CFG.periods?'Aloita jatkoaika':'Seuraava jakso';
+  const u=H[H.length-1];$('undoBtn').textContent=u?'Kumoa: '+u.label:'Kumoa';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';
   lastRunning=null;
 }
@@ -555,16 +560,16 @@ function frame(){
   if(!SCREEN&&S.clock.running){
     if(gameLeft()<=0){
       const s=shotLeft();S.clock.running=false;S.clock.base=0;S.shot.base=s;buzz();
-      toast(S.period<CFG.periods?'End of '+periodName().toLowerCase():(S.score.home===S.score.away?'Tied. Overtime next.':'Final'));
+      toast(S.period<CFG.periods?periodName()+' päättyi':(S.score.home===S.score.away?'Tasapeli. Seuraavaksi jatkoaika.':'Peli päättyi'));
       commit();
     }else if(CFG.shotClock&&S.shot.base>0&&shotLeft()<=0){
-      stopClock();S.shot.base=0;buzz();toast('Shot clock violation');commit();
+      stopClock();S.shot.base=0;buzz();toast('Heittokellorikkomus');commit();
     }
   }
   if(inLast2()!==lastL2)renderAll();
   boardDocs().forEach(drawBoard);
   if(!SCREEN&&S.clock.running!==lastRunning){
-    const b=$('startBtn');b.textContent=S.clock.running?'Stop clock':'Start clock';b.classList.toggle('running',S.clock.running);lastRunning=S.clock.running;
+    const b=$('startBtn');b.textContent=S.clock.running?'Pysäytä kello':'Käynnistä kello';b.classList.toggle('running',S.clock.running);lastRunning=S.clock.running;
   }
   requestAnimationFrame(frame);
 }
@@ -573,19 +578,19 @@ function frame(){
 function openPop(){
   let w=null;
   try{w=window.open('','bb-display','popup,width=1280,height=760');}catch(e){w=null;}
-  if(!w){toast('The browser blocked the window. See the note under the controls.');return;}
+  if(!w){toast('Selain esti ikkunan. Katso ohje ohjainten alta.');return;}
   try{
     const head=Array.from(document.querySelectorAll('link[rel="stylesheet"],link[rel="preconnect"]')).map(l=>l.outerHTML).join('')+'<style>'+$('mainCss').textContent+'</style>';
     const d=w.document;
     d.open();
-    d.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Scoreboard display</title>'+head+'</head><body class="display screen"><div class="wrap"><div class="board-wrap">'+boardTpl+'</div><button class="exit-display" id="fsBtn">Fullscreen</button></div></body></html>');
+    d.write('<!DOCTYPE html><html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Tulostaulu</title>'+head+'</head><body class="display screen"><div class="wrap"><div class="board-wrap">'+boardTpl+'</div><button class="exit-display" id="fsBtn">Koko näyttö</button></div></body></html>');
     d.close();
     d.getElementById('fsBtn').addEventListener('click',()=>{const el=d.documentElement;if(el.requestFullscreen)el.requestFullscreen().catch(()=>{});});
     d.addEventListener('fullscreenchange',()=>d.body.classList.toggle('fs',!!d.fullscreenElement));
     popWin=w;renderBoard(d);
     try{w.focus();}catch(e){}
-    toast('Display window open. Drag it to the TV and press Fullscreen.');
-  }catch(e){popWin=null;toast('Could not set up the display window. See the note under the controls.');}
+    toast('Näyttöikkuna auki. Vedä se televisioon ja paina Koko näyttö.');
+  }catch(e){popWin=null;toast('Näyttöikkunaa ei voitu avata. Katso ohje ohjainten alta.');}
 }
 
 /* ---------- Events ---------- */
@@ -611,7 +616,7 @@ $('controls').addEventListener('click',e=>{
 
 $('controls').addEventListener('input',e=>{
   const i=e.target.closest('.tp-name');if(!i)return;
-  const t=i.dataset.team;CFG[t].name=i.value.trim()||(t==='home'?'Home':'Away');commit();
+  const t=i.dataset.team;CFG[t].name=i.value.trim()||(t==='home'?'Koti':'Vieras');commit();
 });
 $('controls').addEventListener('focusout',e=>{const i=e.target.closest('.tp-name');if(i)i.value=CFG[i.dataset.team].name;});
 $('controls').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('tp-name'))e.target.blur();});
@@ -648,6 +653,7 @@ document.addEventListener('keydown',e=>{
   else if(k==='s'&&CFG.shotClock)resetShot(24);
   else if(k==='d'&&CFG.shotClock)resetShot(14);
   else if(k==='z')undo();
+  else if(k==='a')flipArrow();
   else if(k==='f')document.body.classList.contains('display')?exitDisplay():enterDisplay();
   else if(k==='escape'&&document.body.classList.contains('display'))exitDisplay();
 });
@@ -658,17 +664,17 @@ function setRm(t,on){
   rmMode[t]=on;clearTimeout(rmTimer[t]);
   const panel=document.querySelector('.team-panel[data-team="'+t+'"]');
   panel.classList.toggle('removing',on);
-  panel.querySelector('.rm-btn').textContent=on?'Cancel':'Remove foul';
-  panel.querySelector('.plabel-t').textContent=on?'Tap a number to remove one foul':'Player fouls: tap a number to add';
+  panel.querySelector('.rm-btn').textContent=on?'Peruuta':'Poista virhe';
+  panel.querySelector('.plabel-t').textContent=on?'Poista yksi virhe napauttamalla numeroa':'Pelaajavirheet: lisää napauttamalla numeroa';
   if(on)rmTimer[t]=setTimeout(()=>setRm(t,false),8000);
 }
 function unfoul(t,p){
-  if(p&&!(S.players[t][p]>0)){toast('#'+p+' has no fouls');return;}
-  if(!p&&S.teamFouls[t]<=0){toast(nm(t)+' has no team fouls');return;}
-  pushHist('Remove foul '+(p?'#'+p+' ':'')+nm(t));
+  if(p&&!(S.players[t][p]>0)){toast('#'+p+': ei virheitä');return;}
+  if(!p&&S.teamFouls[t]<=0){toast(nm(t)+': ei joukkuevirheitä');return;}
+  pushHist('Poista virhe '+(p?'#'+p+' ':'')+nm(t));
   if(p)S.players[t][p]--;
   S.teamFouls[t]=Math.max(0,S.teamFouls[t]-1);
-  setRm(t,false);toast('Foul removed'+(p?' from #'+p:'')+', '+nm(t));commit();
+  setRm(t,false);toast('Virhe poistettu'+(p?': #'+p:'')+', '+nm(t));commit();
 }
 
 /* Roster editor */
@@ -687,7 +693,7 @@ function drawNumGrid(){
 }
 function openRoster(t){
   rosterTeam=t;rosterSel=parseNums(CFG[t].roster);
-  $('rosterTitle').textContent='Players for '+CFG[t].name;
+  $('rosterTitle').textContent='Pelaajat: '+CFG[t].name;
   const g=$('numGrid');g.style.setProperty('--c',CFG[t].color);g.style.setProperty('--on-ink',inkFor(CFG[t].color));
   $('rosterText').value=rosterSel.join(', ');drawNumGrid();$('rosterDlg').showModal();
 }
@@ -703,7 +709,7 @@ $('rosterClear').addEventListener('click',()=>{rosterSel=[];$('rosterText').valu
 $('rosterCancel').addEventListener('click',()=>$('rosterDlg').close());
 $('rosterSave').addEventListener('click',()=>{
   CFG[rosterTeam].roster=sortNums(rosterSel).join(', ');
-  $('rosterDlg').close();commit();toast(rosterSel.length+' players set for '+CFG[rosterTeam].name);
+  $('rosterDlg').close();commit();toast(CFG[rosterTeam].name+': '+rosterSel.length+' pelaajaa');
 });
 
 /* Settings */
@@ -730,7 +736,7 @@ function num(id,def,min,max){const v=parseFloat($(id).value);return isFinite(v)?
 $('saveSet').addEventListener('click',()=>{
   const oldLen=periodLen(1),notStarted=S.period===1&&!S.clock.running&&S.clock.base===oldLen;
   TEAMS.forEach(t=>{
-    CFG[t].name=$('s-'+t+'-name').value.trim()||(t==='home'?'Home':'Away');
+    CFG[t].name=$('s-'+t+'-name').value.trim()||(t==='home'?'Koti':'Vieras');
     CFG[t].color=$('s-'+t+'-color').value;
     CFG[t].roster=$('s-'+t+'-roster').value;
   });
@@ -743,14 +749,14 @@ $('saveSet').addEventListener('click',()=>{
   CFG.bonus=Math.round(num('s-bonus',CFG.bonus,1,15));CFG.foulOut=Math.round(num('s-foulout',CFG.foulOut,1,10));
   CFG.shotClock=$('s-shot').checked;CFG.sound=$('s-sound').checked;
   if(notStarted){S.clock.base=periodLen(1);}
-  else if(lenChanged&&S.period<=CFG.periods){toast('New period length starts from the next period');}
+  else if(lenChanged&&S.period<=CFG.periods){toast('Uusi jakson pituus alkaa seuraavasta jaksosta');}
   dlg.close();commit();
 });
 let armTimer;
-function disarmNew(){const b=$('newGameBtn');b.classList.remove('armed');b.textContent='New game';clearTimeout(armTimer);}
+function disarmNew(){const b=$('newGameBtn');b.classList.remove('armed');b.textContent='Uusi peli';clearTimeout(armTimer);}
 $('newGameBtn').addEventListener('click',()=>{
   const b=$('newGameBtn');
-  if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='Tap again to reset';armTimer=setTimeout(disarmNew,3000);return;}
+  if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='Paina uudelleen nollataksesi';armTimer=setTimeout(disarmNew,3000);return;}
   disarmNew();
   TEAMS.forEach(t=>{CFG[t].name=$('s-'+t+'-name').value.trim()||CFG[t].name;CFG[t].color=$('s-'+t+'-color').value;CFG[t].roster=$('s-'+t+'-roster').value;});
   const pv=$('s-plen').value;CFG.periodMin=pv==='custom'?num('s-plen-custom',CFG.periodMin,1,60):+pv;
@@ -763,8 +769,8 @@ $('newGameBtn').addEventListener('click',()=>{
 
 if(SCREEN){
   document.body.classList.add('display','screen');
-  $('exitDisplay').textContent='Fullscreen';
-  document.title='Scoreboard display';
+  $('exitDisplay').textContent='Koko näyttö';
+  document.title='Tulostaulu';
   window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue&&loadFrom(e.newValue))renderAll();});
 }
 buildTeamPanels();renderAll();requestAnimationFrame(frame);
