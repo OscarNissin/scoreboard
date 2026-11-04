@@ -389,6 +389,10 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 .aux-pre[hidden]{display:none}
 .aux-f{display:grid;grid-template-columns:1fr 92px auto;gap:6px;align-items:center;font-size:.85rem}
 .aux-f .tin{min-height:34px;padding:4px 8px;font-size:.95rem}
+/* ---------- v12 ---------- */
+.check-l{display:flex;align-items:center;gap:8px;color:var(--ink)}
+.check-l input{width:20px;height:20px}
+.field.check .btn{margin-left:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -533,7 +537,7 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
       <label class="field">Pelaaja ulos virheillä<input type="number" id="s-foulout" min="1" max="10"></label>
       <label class="field check full"><input type="checkbox" id="s-pf"> Merkitse virheet pelaajille (pois päältä: vain joukkuevirheet)</label>
       <label class="field check"><input type="checkbox" id="s-shot"> Käytä heittokelloa</label>
-      <label class="field check"><input type="checkbox" id="s-sound"> Summeri</label>
+      <div class="field check"><label class="check-l"><input type="checkbox" id="s-sound"> Summeri</label><button type="button" class="btn small" id="buzzTest">Testaa summeri</button></div>
       <label class="field check"><input type="checkbox" id="s-keys"> Näytä pikanäppäimet painikkeissa</label>
       <label class="field check full"><input type="checkbox" id="s-scorers"> Kysy pisteentekijän pelinumero</label>
       <label class="field check full"><input type="checkbox" id="s-stats"> Tilastot ja pöytäkirja</label>
@@ -757,8 +761,14 @@ function shotShown(){return CFG.shotClock&&gameLeft()>=shotLeft();}
 function stopClock(){if(!S.clock.running)return;const g=gameLeft(),s=shotLeft();S.clock.base=g;S.shot.base=s;S.clock.running=false;}
 function rebase(){const g=gameLeft(),s=shotLeft(),t=now();S.clock.base=g;S.shot.base=s;S.clock.startedAt=t;S.shot.startedAt=t;}
 const isPre=()=>S.phase==='pre';
-function toggleClock(){
+function toggleClock(force){
   if(isPre()){toast('Aloita ottelu ensin');return;}
+  if(force!==true&&!S.clock.running&&S.aux&&S.aux.k!=='pre'&&auxLeft()>0){
+    const isTo=S.aux.k==='to';
+    ask(isTo?'Aikalisää on vielä jäljellä':'Tauko on vielä kesken',(isTo?'Aikalisää':'Taukoa')+' on jäljellä '+fmtAux(auxLeft())+'. Haluatko käynnistää pelikellon? '+(isTo?'Aikalisä':'Tauko')+' päättyy samalla.',
+      [{label:'Käynnistä pelikello',primary:true,fn:()=>toggleClock(true)}]);
+    return;
+  }
   if(S.clock.running){stopClock();logE('Kello pysäytetty');commit();return;}
   if(S.over){toast('Peli on päätetty. Kumoa tai aloita uusi peli asetuksista.');return;}
   if(gameLeft()<=0){toast('Jakso on päättynyt. Paina Seuraava jakso.');return;}
@@ -913,8 +923,12 @@ function setPeriod(p){
 }
 function setArrow(side){if(S.arrow===side)return;pushHist('Nuoli');S.arrow=side;logE('Hallintanuoli: '+nm(side));commit();}
 function flipArrow(){pushHist('Nuoli');S.arrow=S.arrow==='home'?'away':'home';logE('Hallintanuoli: '+nm(S.arrow));commit();}
-function startGame(){
+function startGame(force){
   if(!isPre())return;
+  if(force!==true&&S.aux&&S.aux.k==='pre'&&S.aux.running!==false&&auxLeft()>0){
+    ask('Aloitetaanko ottelu?','Ottelua edeltävää aikaa on vielä jäljellä '+fmtAux(auxLeft())+'. Haluatko varmasti aloittaa ottelun nyt?',[{label:'Aloita ottelu',primary:true,fn:()=>startGame(true)}]);
+    return;
+  }
   pushHist('Ottelu aloitettu',true);
   if(S.aux){logE(auxLabel()+' päättyi',true);S.aux=null;}
   S.phase='game';S.preEnded=false;
@@ -933,7 +947,8 @@ function buzz(){
   if(!CFG.sound||!actx)return;
   try{
     const t=actx.currentTime,g=actx.createGain();
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.03);g.gain.setValueAtTime(.18,t+1.1);g.gain.linearRampToValueAtTime(0,t+1.25);
+    if(actx.state==='suspended')actx.resume().catch(()=>{});
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.03);g.gain.setValueAtTime(.35,t+1.1);g.gain.linearRampToValueAtTime(0,t+1.25);
     g.connect(actx.destination);
     [196,247,294].forEach(f=>{const o=actx.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(g);o.start(t);o.stop(t+1.3);});
   }catch(e){}
@@ -1076,14 +1091,14 @@ function renderAll(){
   lastRunning=null;lastDue=null;
 }
 
-function frame(){
-  if(!SCREEN&&S.aux){
+function tick(){
+  if(SCREEN)return;
+  if(S.aux){
     const l=auxLeft();
     if(S.aux.k==='pre'&&S.aux.running!==false&&!S.aux.w3&&l<=180000&&l>0){S.aux.w3=true;buzz();toast('3 minuuttia ottelun alkuun');logE('3 minuuttia ottelun alkuun',true);save();}
     if(l<=0&&S.aux.running!==false)endAux(true);
   }
-  if(!SCREEN&&S.aux)$('auxTime').textContent=fmtAux(auxLeft());
-  if(!SCREEN&&S.clock.running){
+  if(S.clock.running){
     if(gameLeft()<=0){
       const s=shotLeft();S.clock.running=false;S.clock.base=0;S.shot.base=s;buzz();
       const msg=periodName()+' päättyi';
@@ -1094,6 +1109,11 @@ function frame(){
       stopClock();S.shot.base=0;buzz();toast('Heittokellorikkomus');logE('Heittokellorikkomus');commit();
     }
   }
+}
+setInterval(tick,200);
+function frame(){
+  tick();
+  if(!SCREEN&&S.aux)$('auxTime').textContent=fmtAux(auxLeft());
   if(inLast2()!==lastL2)renderAll();
   boardDocs().forEach(drawBoard);
   if(!SCREEN&&S.clock.running!==lastRunning){
@@ -1117,6 +1137,7 @@ function openPop(){
     d.getElementById('fsBtn').addEventListener('click',()=>{const el=d.documentElement;if(el.requestFullscreen)el.requestFullscreen().catch(()=>{});});
     d.addEventListener('fullscreenchange',()=>d.body.classList.toggle('fs',!!d.fullscreenElement));
     popWin=w;renderBoard(d);
+    const popLoop=()=>{if(!popWin||popWin.closed||popWin!==w)return;try{drawBoard(d);w.requestAnimationFrame(popLoop);}catch(e){}};w.requestAnimationFrame(popLoop);
     try{w.focus();}catch(e){}
     toast('Näyttöikkuna auki. Vedä se televisioon ja paina Koko näyttö.');
   }catch(e){popWin=null;toast('Näyttöikkunaa ei voitu avata. Katso ohje ohjainten alta.');}
@@ -1204,6 +1225,7 @@ $('popBtn').addEventListener('click',openPop);
 /* Keyboard */
 document.addEventListener('keydown',e=>{
   if(SCREEN){if(e.key.toLowerCase()==='f'&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});return;}
+  ensureAudio();
   if(document.querySelector('dialog[open]'))return;
   if(isPre()&&!e.target.closest('input,select,textarea')){
     const kk=e.key.toLowerCase();
@@ -1555,6 +1577,7 @@ TEAMS.forEach(t=>{
 $('libFilter').addEventListener('input',renderLib);
 $('libClose').addEventListener('click',()=>$('libDlg').close());
 $('cancelSet').addEventListener('click',()=>dlg.close());
+$('buzzTest').addEventListener('click',()=>{ensureAudio();const was=CFG.sound;CFG.sound=true;buzz();CFG.sound=was;if(!actx)toast('Selain ei tue äänentoistoa');else if(actx.state!=='running')toast('Selain esti äänen. Napsauta sivua ja yritä uudelleen.');});
 $('saveSet').addEventListener('click',()=>{
   const oldLen=periodLen(1),notStarted=S.period===1&&!S.clock.running&&S.clock.base===oldLen;
   const c=readForm(),lenChanged=c.periodMin!==CFG.periodMin;

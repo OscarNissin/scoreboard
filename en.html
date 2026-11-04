@@ -389,6 +389,10 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 .aux-pre[hidden]{display:none}
 .aux-f{display:grid;grid-template-columns:1fr 92px auto;gap:6px;align-items:center;font-size:.85rem}
 .aux-f .tin{min-height:34px;padding:4px 8px;font-size:.95rem}
+/* ---------- v12 ---------- */
+.check-l{display:flex;align-items:center;gap:8px;color:var(--ink)}
+.check-l input{width:20px;height:20px}
+.field.check .btn{margin-left:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -533,7 +537,7 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
       <label class="field">Player fouls out at<input type="number" id="s-foulout" min="1" max="10"></label>
       <label class="field check full"><input type="checkbox" id="s-pf"> Track fouls per player (off: team fouls only)</label>
       <label class="field check"><input type="checkbox" id="s-shot"> Use shot clock</label>
-      <label class="field check"><input type="checkbox" id="s-sound"> Buzzer sound</label>
+      <div class="field check"><label class="check-l"><input type="checkbox" id="s-sound"> Buzzer sound</label><button type="button" class="btn small" id="buzzTest">Test buzzer</button></div>
       <label class="field check"><input type="checkbox" id="s-keys"> Show keyboard shortcuts on buttons</label>
       <label class="field check full"><input type="checkbox" id="s-scorers"> Ask for the scorer’s number</label>
       <label class="field check full"><input type="checkbox" id="s-stats"> Stats and score sheet</label>
@@ -757,8 +761,14 @@ function shotShown(){return CFG.shotClock&&gameLeft()>=shotLeft();}
 function stopClock(){if(!S.clock.running)return;const g=gameLeft(),s=shotLeft();S.clock.base=g;S.shot.base=s;S.clock.running=false;}
 function rebase(){const g=gameLeft(),s=shotLeft(),t=now();S.clock.base=g;S.shot.base=s;S.clock.startedAt=t;S.shot.startedAt=t;}
 const isPre=()=>S.phase==='pre';
-function toggleClock(){
+function toggleClock(force){
   if(isPre()){toast('Start the game first');return;}
+  if(force!==true&&!S.clock.running&&S.aux&&S.aux.k!=='pre'&&auxLeft()>0){
+    const isTo=S.aux.k==='to';
+    ask(isTo?'Timeout still running':'Break still running',(isTo?'Timeout':'Break')+' time left: '+fmtAux(auxLeft())+'. Do you want to start the game clock? The '+(isTo?'timeout':'break')+' ends at the same time.',
+      [{label:'Start game clock',primary:true,fn:()=>toggleClock(true)}]);
+    return;
+  }
   if(S.clock.running){stopClock();logE('Clock stopped');commit();return;}
   if(S.over){toast('The game is over. Undo, or start a new game in Settings.');return;}
   if(gameLeft()<=0){toast('The period is over. Press Next period.');return;}
@@ -913,8 +923,12 @@ function setPeriod(p){
 }
 function setArrow(side){if(S.arrow===side)return;pushHist('Arrow');S.arrow=side;logE('Possession arrow: '+nm(side));commit();}
 function flipArrow(){pushHist('Arrow');S.arrow=S.arrow==='home'?'away':'home';logE('Possession arrow: '+nm(S.arrow));commit();}
-function startGame(){
+function startGame(force){
   if(!isPre())return;
+  if(force!==true&&S.aux&&S.aux.k==='pre'&&S.aux.running!==false&&auxLeft()>0){
+    ask('Start the game?','Pre-game time left: '+fmtAux(auxLeft())+'. Are you sure you want to start the game now?',[{label:'Start game',primary:true,fn:()=>startGame(true)}]);
+    return;
+  }
   pushHist('Game started',true);
   if(S.aux){logE(auxLabel()+' ended',true);S.aux=null;}
   S.phase='game';S.preEnded=false;
@@ -933,7 +947,8 @@ function buzz(){
   if(!CFG.sound||!actx)return;
   try{
     const t=actx.currentTime,g=actx.createGain();
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.03);g.gain.setValueAtTime(.18,t+1.1);g.gain.linearRampToValueAtTime(0,t+1.25);
+    if(actx.state==='suspended')actx.resume().catch(()=>{});
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.03);g.gain.setValueAtTime(.35,t+1.1);g.gain.linearRampToValueAtTime(0,t+1.25);
     g.connect(actx.destination);
     [196,247,294].forEach(f=>{const o=actx.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(g);o.start(t);o.stop(t+1.3);});
   }catch(e){}
@@ -1076,14 +1091,14 @@ function renderAll(){
   lastRunning=null;lastDue=null;
 }
 
-function frame(){
-  if(!SCREEN&&S.aux){
+function tick(){
+  if(SCREEN)return;
+  if(S.aux){
     const l=auxLeft();
     if(S.aux.k==='pre'&&S.aux.running!==false&&!S.aux.w3&&l<=180000&&l>0){S.aux.w3=true;buzz();toast('3 minutes to tip-off');logE('3 minutes to tip-off',true);save();}
     if(l<=0&&S.aux.running!==false)endAux(true);
   }
-  if(!SCREEN&&S.aux)$('auxTime').textContent=fmtAux(auxLeft());
-  if(!SCREEN&&S.clock.running){
+  if(S.clock.running){
     if(gameLeft()<=0){
       const s=shotLeft();S.clock.running=false;S.clock.base=0;S.shot.base=s;buzz();
       const msg='End of '+periodName().toLowerCase();
@@ -1094,6 +1109,11 @@ function frame(){
       stopClock();S.shot.base=0;buzz();toast('Shot clock violation');logE('Shot clock violation');commit();
     }
   }
+}
+setInterval(tick,200);
+function frame(){
+  tick();
+  if(!SCREEN&&S.aux)$('auxTime').textContent=fmtAux(auxLeft());
   if(inLast2()!==lastL2)renderAll();
   boardDocs().forEach(drawBoard);
   if(!SCREEN&&S.clock.running!==lastRunning){
@@ -1117,6 +1137,7 @@ function openPop(){
     d.getElementById('fsBtn').addEventListener('click',()=>{const el=d.documentElement;if(el.requestFullscreen)el.requestFullscreen().catch(()=>{});});
     d.addEventListener('fullscreenchange',()=>d.body.classList.toggle('fs',!!d.fullscreenElement));
     popWin=w;renderBoard(d);
+    const popLoop=()=>{if(!popWin||popWin.closed||popWin!==w)return;try{drawBoard(d);w.requestAnimationFrame(popLoop);}catch(e){}};w.requestAnimationFrame(popLoop);
     try{w.focus();}catch(e){}
     toast('Display window open. Drag it to the TV and press Fullscreen.');
   }catch(e){popWin=null;toast('Could not set up the display window. See the note under the controls.');}
@@ -1204,6 +1225,7 @@ $('popBtn').addEventListener('click',openPop);
 /* Keyboard */
 document.addEventListener('keydown',e=>{
   if(SCREEN){if(e.key.toLowerCase()==='f'&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});return;}
+  ensureAudio();
   if(document.querySelector('dialog[open]'))return;
   if(isPre()&&!e.target.closest('input,select,textarea')){
     const kk=e.key.toLowerCase();
@@ -1555,6 +1577,7 @@ TEAMS.forEach(t=>{
 $('libFilter').addEventListener('input',renderLib);
 $('libClose').addEventListener('click',()=>$('libDlg').close());
 $('cancelSet').addEventListener('click',()=>dlg.close());
+$('buzzTest').addEventListener('click',()=>{ensureAudio();const was=CFG.sound;CFG.sound=true;buzz();CFG.sound=was;if(!actx)toast('This browser doesn’t support audio');else if(actx.state!=='running')toast('The browser blocked sound. Click the page and try again.');});
 $('saveSet').addEventListener('click',()=>{
   const oldLen=periodLen(1),notStarted=S.period===1&&!S.clock.running&&S.clock.base===oldLen;
   const c=readForm(),lenChanged=c.periodMin!==CFG.periodMin;
