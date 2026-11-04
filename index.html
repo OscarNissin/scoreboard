@@ -297,6 +297,10 @@ details.help .hint{margin-top:6px}
 .st-table.sheet th:last-child,.st-table.sheet td:last-child{text-align:right}
 #statsDlg{width:min(920px,96vw)}
 #confirmDlg{width:min(480px,94vw)}
+#endDlg{width:min(500px,94vw)}
+.end-score{font:700 1.7rem/1.2 "Saira Condensed","Arial Narrow",sans-serif;margin:0 0 6px}
+#endDlg h3{font-size:.95rem;margin:14px 0 8px}
+.end-actions{display:grid;gap:8px}
 .bigbtn{min-height:58px;border:none;border-radius:11px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 10px;font:700 1.45rem/1.1 "Saira Condensed","Arial Narrow",sans-serif;cursor:pointer;width:100%}
 .bigbtn:hover{filter:brightness(1.08)}
 .bigbtn:active{transform:translateY(1px)}
@@ -471,6 +475,25 @@ details.help .hint{margin-top:6px}
 <dialog id="confirmDlg" aria-labelledby="cfTitle">
   <div class="dlg-body"><h2 id="cfTitle"></h2><p id="cfText" style="margin:0;line-height:1.5"></p></div>
   <div class="dlg-foot"><button class="btn" id="cfCancel">Peruuta</button><div class="right" id="cfBtns"></div></div>
+</dialog>
+
+<dialog id="endDlg" aria-labelledby="endTitle">
+  <div class="dlg-body">
+    <h2 id="endTitle">Peli päättyi</h2>
+    <p class="end-score" id="endScore"></p>
+    <h3>Tallenna pelin tiedot</h3>
+    <div class="end-actions">
+      <button class="btn" id="endStatsTxt">Lataa tilastot ja pöytäkirja (.txt)</button>
+      <button class="btn" id="endCsv">Lataa pöytäkirja (CSV)</button>
+      <button class="btn" id="endLog">Tallenna loki (.txt)</button>
+      <button class="btn ghost" id="endCopy">Kopioi tilastot leikepöydälle</button>
+    </div>
+    <p class="hint">Uusi peli nollaa tämän pelin pisteet, virheet ja tilastot. Loki säilyy.</p>
+  </div>
+  <div class="dlg-foot">
+    <button class="btn" id="endClose">Sulje</button>
+    <div class="right"><button class="btn" id="endSettings">Asetukset</button><button class="btn primary" id="endNew">Aloita uusi peli</button></div>
+  </div>
 </dialog>
 
 <dialog id="helpDlg" aria-labelledby="helpTitle">
@@ -811,8 +834,7 @@ function renderAll(){
     }).join(''):'<span class="empty-roster">Lisää pelinumerot kohdasta Muokkaa pelaajia.</span>';
   });
   $('arrowSub').textContent=S.arrow==='home'?'← '+nm('home'):(S.arrow==='away'?nm('away')+' →':'Ei asetettu');
-  $('nextBtn').textContent=S.over?'Peli päätetty':(S.period>=CFG.periods?'Päätä peli':'Seuraava jakso');
-  $('nextBtn').disabled=!!S.over;
+  $('nextBtn').textContent=S.over?'Aloita uusi peli':(S.period>=CFG.periods?'Päätä peli':'Seuraava jakso');
   const u=H[H.length-1];$('undoBtn').textContent=u?'Kumoa: '+u.label:'Kumoa';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
   $('statsBtn').hidden=!CFG.stats;
@@ -961,7 +983,7 @@ function ask(title,text,buttons){
   const p=box.querySelector('.primary');if(p)p.focus();
 }
 function askNext(){
-  if(S.over)return;
+  if(S.over){openEnd();return;}
   const left=gameLeft(),warn=left>0?' Jaksossa on vielä aikaa jäljellä ('+fmtGame(left)+').':'';
   if(S.period<CFG.periods){
     const np=S.period+1;
@@ -980,7 +1002,24 @@ function endGame(){
   stopClock();S.over=true;evPush('final',null);
   logE('Peli päätetty: '+nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away'),true);
   toast('Peli päätetty');commit();
+  setTimeout(openEnd,400);
 }
+function downloadText(name,txt,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:(type||'text/plain')+';charset=utf-8'}));
+  a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function openEnd(){
+  const d=$('endDlg');if(d.open)return;
+  $('endScore').textContent=nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away');
+  d.showModal();
+}
+$('endStatsTxt').addEventListener('click',()=>{try{downloadText('tilastot-'+new Date().toISOString().slice(0,10)+'.txt',statsText());}catch(e){toast('Lataus ei onnistunut. Käytä kopiointia.');}});
+$('endCsv').addEventListener('click',()=>$('statsCsv').click());
+$('endLog').addEventListener('click',()=>$('logDownload').click());
+$('endCopy').addEventListener('click',()=>$('statsCopy').click());
+$('endClose').addEventListener('click',()=>$('endDlg').close());
+$('endSettings').addEventListener('click',()=>{$('endDlg').close();$('settingsBtn').click();});
+$('endNew').addEventListener('click',()=>{$('endDlg').close();newGame();});
 $('cfCancel').addEventListener('click',()=>$('confirmDlg').close());
 
 /* Scorer */

@@ -297,6 +297,10 @@ details.help .hint{margin-top:6px}
 .st-table.sheet th:last-child,.st-table.sheet td:last-child{text-align:right}
 #statsDlg{width:min(920px,96vw)}
 #confirmDlg{width:min(480px,94vw)}
+#endDlg{width:min(500px,94vw)}
+.end-score{font:700 1.7rem/1.2 "Saira Condensed","Arial Narrow",sans-serif;margin:0 0 6px}
+#endDlg h3{font-size:.95rem;margin:14px 0 8px}
+.end-actions{display:grid;gap:8px}
 .bigbtn{min-height:58px;border:none;border-radius:11px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 10px;font:700 1.45rem/1.1 "Saira Condensed","Arial Narrow",sans-serif;cursor:pointer;width:100%}
 .bigbtn:hover{filter:brightness(1.08)}
 .bigbtn:active{transform:translateY(1px)}
@@ -471,6 +475,25 @@ details.help .hint{margin-top:6px}
 <dialog id="confirmDlg" aria-labelledby="cfTitle">
   <div class="dlg-body"><h2 id="cfTitle"></h2><p id="cfText" style="margin:0;line-height:1.5"></p></div>
   <div class="dlg-foot"><button class="btn" id="cfCancel">Cancel</button><div class="right" id="cfBtns"></div></div>
+</dialog>
+
+<dialog id="endDlg" aria-labelledby="endTitle">
+  <div class="dlg-body">
+    <h2 id="endTitle">Game over</h2>
+    <p class="end-score" id="endScore"></p>
+    <h3>Save the game data</h3>
+    <div class="end-actions">
+      <button class="btn" id="endStatsTxt">Download stats and score sheet (.txt)</button>
+      <button class="btn" id="endCsv">Download score sheet (CSV)</button>
+      <button class="btn" id="endLog">Save log (.txt)</button>
+      <button class="btn ghost" id="endCopy">Copy stats to clipboard</button>
+    </div>
+    <p class="hint">A new game resets this game’s points, fouls and stats. The log is kept.</p>
+  </div>
+  <div class="dlg-foot">
+    <button class="btn" id="endClose">Close</button>
+    <div class="right"><button class="btn" id="endSettings">Settings</button><button class="btn primary" id="endNew">Start new game</button></div>
+  </div>
 </dialog>
 
 <dialog id="helpDlg" aria-labelledby="helpTitle">
@@ -811,8 +834,7 @@ function renderAll(){
     }).join(''):'<span class="empty-roster">Add player numbers with Edit players.</span>';
   });
   $('arrowSub').textContent=S.arrow==='home'?'← '+nm('home'):(S.arrow==='away'?nm('away')+' →':'Not set');
-  $('nextBtn').textContent=S.over?'Game over':(S.period>=CFG.periods?'End game':'Next period');
-  $('nextBtn').disabled=!!S.over;
+  $('nextBtn').textContent=S.over?'Start new game':(S.period>=CFG.periods?'End game':'Next period');
   const u=H[H.length-1];$('undoBtn').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
   $('statsBtn').hidden=!CFG.stats;
@@ -961,7 +983,7 @@ function ask(title,text,buttons){
   const p=box.querySelector('.primary');if(p)p.focus();
 }
 function askNext(){
-  if(S.over)return;
+  if(S.over){openEnd();return;}
   const left=gameLeft(),warn=left>0?' There is still time left in the period ('+fmtGame(left)+').':'';
   if(S.period<CFG.periods){
     const np=S.period+1;
@@ -980,7 +1002,24 @@ function endGame(){
   stopClock();S.over=true;evPush('final',null);
   logE('Game ended: '+nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away'),true);
   toast('Game ended');commit();
+  setTimeout(openEnd,400);
 }
+function downloadText(name,txt,type){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:(type||'text/plain')+';charset=utf-8'}));
+  a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function openEnd(){
+  const d=$('endDlg');if(d.open)return;
+  $('endScore').textContent=nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away');
+  d.showModal();
+}
+$('endStatsTxt').addEventListener('click',()=>{try{downloadText('stats-'+new Date().toISOString().slice(0,10)+'.txt',statsText());}catch(e){toast('Download didn’t work. Use copy instead.');}});
+$('endCsv').addEventListener('click',()=>$('statsCsv').click());
+$('endLog').addEventListener('click',()=>$('logDownload').click());
+$('endCopy').addEventListener('click',()=>$('statsCopy').click());
+$('endClose').addEventListener('click',()=>$('endDlg').close());
+$('endSettings').addEventListener('click',()=>{$('endDlg').close();$('settingsBtn').click();});
+$('endNew').addEventListener('click',()=>{$('endDlg').close();newGame();});
 $('cfCancel').addEventListener('click',()=>$('confirmDlg').close());
 
 /* Scorer */
