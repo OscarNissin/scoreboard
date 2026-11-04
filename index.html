@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Koripallon tulostaulu</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -393,13 +397,25 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 .check-l{display:flex;align-items:center;gap:8px;color:var(--ink)}
 .check-l input{width:20px;height:20px}
 .field.check .btn{margin-left:auto}
+/* ---------- v13: offline ---------- */
+.offline-badge{display:inline-block;vertical-align:middle;margin-left:8px;font:600 .72rem/1 "IBM Plex Sans","Segoe UI",sans-serif;padding:4px 8px;border-radius:999px;background:#D2600E;color:#fff}
+.offline-badge[hidden]{display:none}
+/* ---------- v14: version history ---------- */
+.appver{margin:18px 0 0;font-size:.8rem;color:var(--muted);text-align:center}
+.appver a{color:var(--muted)}
+#verDlg{width:min(600px,94vw)}
+.ver h3{display:flex;align-items:baseline;gap:8px;font-size:1rem;margin:14px 0 4px}
+.ver-d{margin-left:auto;font-weight:400;font-size:.8rem;color:var(--muted)}
+.ver-cur{font:600 .7rem/1 "IBM Plex Sans",sans-serif;padding:3px 7px;border-radius:999px;background:var(--focus);color:#fff}
+.ver ul{margin:0;padding-left:18px}
+.ver li{font-size:.9rem;line-height:1.45;margin:2px 0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>Tulostaulu</h1>
+    <h1>Tulostaulu <span class="offline-badge" id="offBadge" hidden>Ei verkkoyhteyttä</span></h1>
     <div class="top-actions">
       <button class="btn small" id="popBtn">Avaa näyttöikkuna</button>
       <button class="btn small ghost" id="displayBtn">Koko näyttö tässä</button>
@@ -562,6 +578,7 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
       <label class="field full">Koodi<textarea id="tplCode" rows="3" placeholder="Liitä koodi tähän, tai luo koodi lomakkeen asetuksista"></textarea></label>
       <div class="field full"><div class="row r2"><button class="btn small" id="tplMake">Luo ja kopioi koodi</button><button class="btn small" id="tplImport">Käytä koodia</button></div></div>
     </div>
+    <p class="appver"><span id="appVer"></span> – <a href="#" id="verLink">Versiohistoria</a></p>
   </div>
   <div class="dlg-foot">
     <button class="btn danger" id="newGameBtn">Uusi peli</button>
@@ -638,6 +655,15 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
   <div class="dlg-foot"><span></span><div class="right"><button class="btn" id="spCancel">Peruuta</button><button class="btn primary" id="spOk" disabled>Merkitse</button></div></div>
 </dialog>
 
+<dialog id="verDlg" aria-labelledby="verTitle">
+  <div class="dlg-body">
+    <h2 id="verTitle">Versiohistoria</h2>
+    <p class="hint" id="verNow" style="margin:0 0 8px"></p>
+    <div id="verList"></div>
+  </div>
+  <div class="dlg-foot"><button class="btn" id="verCheck">Tarkista päivitykset</button><div class="right"><button class="btn primary" id="verClose">Sulje</button></div></div>
+</dialog>
+
 <dialog id="helpDlg" aria-labelledby="helpTitle">
   <div class="dlg-body help-body">
     <h2 id="helpTitle">Ohje</h2>
@@ -701,6 +727,34 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 
 <script>
 (function(){
+/*CHANGELOG_START*/
+const APP_VERSION='1.12.0';
+const CHANGELOG=[
+ {v:'1.12.0',d:'2026-11-04',i:['Versiohistoria ja versionumero asetusten alalaitaan','Päivitysten tarkistus: kertoo, jos GitHubissa on uudempi versio']},
+ {v:'1.11.0',d:'2026-11-04',i:['Offline-tuki: sovellus aukeaa ja latautuu uudelleen ilman verkkoa','Sovelluksen voi asentaa koneelle tai tabletille','Ilmoitus, kun verkkoyhteys puuttuu']},
+ {v:'1.10.0',d:'2026-11-04',i:['Varmistus, jos ottelu aloitetaan ottelua edeltävän ajan ollessa kesken','Varmistus, jos pelikello käynnistetään aikalisän tai tauon aikana','Kello ja summeri toimivat myös, kun ohjausikkuna on taustalla','Näyttöikkuna päivittää itseään itsenäisesti','Summerin testaus asetuksissa, voimakkaampi summeri']},
+ {v:'1.9.0',d:'2026-11-04',i:['Ottelua edeltävä kello: erilliset kentät "Alkaa minuutin päästä" ja "Alkaa klo"','Ottelua edeltävän kellon ruutu auki heti uudessa ottelussa','Seuraava jakso -napissa näkyy, mihin jaksoon siirrytään']},
+ {v:'1.8.0',d:'2026-11-04',i:['Ottelua edeltävä vaihe ja Aloita ottelu -painike','Pelikello, nuoli ja muut ohjaimet näkyvät vasta ottelun alettua']},
+ {v:'1.7.0',d:'2026-11-04',i:['FIBA 2026 virhetyypit: tekninen luokka 1 ja 2, pysäyttävä, räikeä, pelistä erottava, päävalmentaja ja joukkuepenkki','Automaattinen pelistä erottaminen uusien sääntöjen mukaan','Pikanäppäinmerkit painikkeissa (asetuksista pois päältä)']},
+ {v:'1.6.0',d:'2026-11-04',i:['Erikoisvirheet ja automaattinen ulosajo','Nuolinäppäimet asettavat hallintanuolen']},
+ {v:'1.5.1',d:'2026-11-04',i:['Asetussivun asettelu siistitty tasaisiin riveihin']},
+ {v:'1.5.0',d:'2026-11-04',i:['Logokirjasto GitHubin logos-kansiosta ja logoehdotukset nimen perusteella','Kolmiosainen nuolinappi: ← / Käännä nuoli / →']},
+ {v:'1.4.0',d:'2026-11-04',i:['Hallintanuoli vilkkuu, jos sitä ei ole asetettu pelikellon käynnistyessä','Ottelua edeltävän kellon voi asettaa tiettyyn aikaan','Välilyönti pysäyttää taukokellon eikä käynnistä pelikelloa tauon aikana','Taukokellon pysäytys ja jatko']},
+ {v:'1.3.0',d:'2026-11-04',i:['Ottelua edeltävä kello summereineen','Taukokello jaksojen väliin ja puoliajalle','Aikalisäkello ja aikalisän minuutti pöytäkirjaan']},
+ {v:'1.2.0',d:'2026-11-04',i:['Puoliajalla huomautus hyökkäyssuunnan vaihdosta ja nuolen kääntö','Pelin päättymisikkuna: tilastojen ja lokin lataus, uusi peli']},
+ {v:'1.1.0',d:'2026-11-04',i:['"Päätä peli?" -kysymys viimeisen jakson jälkeen','Varmistus seuraavaan jaksoon siirryttäessä','Uusi kellopaneeli: kello, nuoli ja seuraava jakso isoina nappeina']},
+ {v:'1.0.0',d:'2026-11-04',i:['Uusi ulkoasu ja terävämmät fontit','Ohjeet ?-napin taakse','Pisteentekijät, tilastot ja pöytäkirja','Pelaajavirheiden enimmäismäärä']},
+ {v:'0.9.0',d:'2026-11-04',i:['Englanninkielinen versio']},
+ {v:'0.8.0',d:'2026-11-04',i:['Joukkueiden logot','Pelinumerot järjestyvät automaattisesti','Aikalisän poisto']},
+ {v:'0.7.0',d:'2026-11-04',i:['Pelkät joukkuevirheet -tila','Jakson valinta käsin ja vapaampi peliajan muokkaus','Pohjat ja asetuskoodit','Loki']},
+ {v:'0.6.0',d:'2026-11-04',i:['Suomenkielinen käyttöliittymä']},
+ {v:'0.5.0',d:'2026-11-04',i:['Virheen poisto','Iso kääntyvä hallintanuoli ja sen pikanäppäin','Viimeisten 2 minuutin korostus']},
+ {v:'0.4.0',d:'2026-11-04',i:['Joukkueiden nimet muokattavissa','Virheet ja aikalisät palloina','Punainen valo, kun kello on pysähtynyt']},
+ {v:'0.3.0',d:'2026-11-04',i:['Pelaajanumeroiden valinta']},
+ {v:'0.2.0',d:'2026-11-04',i:['Pelaajavirheet tulostaululla','Erillinen näyttöikkuna']},
+ {v:'0.1.0',d:'2026-11-04',i:['Ensimmäinen versio: pisteet, virheet, aikalisät, jaksot, pelikello, heittokello, kumoa ja näyttötila']}
+];
+/*CHANGELOG_END*/
 const KEY='bb-scoreboard-v1';
 const TEAMS=['home','away'];
 const $=id=>document.getElementById(id);
@@ -1639,6 +1693,26 @@ $('tplImport').addEventListener('click',()=>{
   fillForm(c);toast('Koodin asetukset lomakkeella. Ota käyttöön painamalla Tallenna.');
 });
 
+/* Version history */
+function cmpVer(a,b){const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<3;i++){const d=(x[i]||0)-(y[i]||0);if(d)return d;}return 0;}
+const fmtDate=d=>{const p=String(d).split('-');return p.length===3?(+p[2])+'.'+(+p[1])+'.'+p[0]:d;};
+$('appVer').textContent='Versio '+APP_VERSION;
+function renderVer(){
+  $('verNow').textContent='Käytössä versio '+APP_VERSION+'.';
+  $('verList').innerHTML=CHANGELOG.map(r=>'<section class="ver"><h3>'+esc(r.v)+(r.v===APP_VERSION?' <span class="ver-cur">käytössä</span>':'')+'<span class="ver-d">'+esc(fmtDate(r.d))+'</span></h3><ul>'+r.i.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></section>').join('');
+}
+$('verLink').addEventListener('click',e=>{e.preventDefault();renderVer();$('verDlg').showModal();});
+$('verClose').addEventListener('click',()=>$('verDlg').close());
+$('verCheck').addEventListener('click',async()=>{
+  if(!/^https?:$/.test(location.protocol)){toast('Päivitysten tarkistus toimii GitHub-sivulla');return;}
+  try{
+    const r=await fetch(location.pathname,{cache:'no-store'});const t=await r.text();
+    const m=/const APP_VERSION='([^']+)'/.exec(t);if(!m)throw new Error('nover');
+    if(cmpVer(m[1],APP_VERSION)>0)ask('Uusi versio saatavilla','Versio '+m[1]+' on saatavilla (käytössä '+APP_VERSION+'). Lataa sivu uudelleen ottaaksesi sen käyttöön. Käynnissä oleva peli säilyy.',[{label:'Lataa uudelleen',primary:true,fn:()=>location.reload()}]);
+    else toast('Käytössä on uusin versio ('+APP_VERSION+')');
+  }catch(e){toast('Päivitysten tarkistus ei onnistunut. Onko verkkoyhteys päällä?');}
+});
+
 /* Help */
 $('helpBtn').addEventListener('click',()=>$('helpDlg').showModal());
 $('helpClose').addEventListener('click',()=>$('helpDlg').close());
@@ -1768,6 +1842,12 @@ if(SCREEN){
   window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue&&loadFrom(e.newValue))renderAll();});
 }
 if(!SCREEN)ensurePre();
+/* Offline support */
+function updOnline(){const b=$('offBadge');if(b)b.hidden=navigator.onLine!==false;}
+window.addEventListener('online',updOnline);window.addEventListener('offline',updOnline);updOnline();
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+  window.addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}});
+}
 buildTeamPanels();renderAll();
 if(!SCREEN)logE('Ohjaussivu avattu (tilanne jatkuu tallennetusta)',true);
 requestAnimationFrame(frame);
