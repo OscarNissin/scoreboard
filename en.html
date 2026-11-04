@@ -239,6 +239,10 @@ body.screen{cursor:default}
 .board .prow .pn{font-weight:500}
 .board .plist-h{font-weight:400;color:#A9A69C}
 .board .bonus{font-weight:600}
+.board .balls{gap:.5cqi}
+.ball.sp{outline:max(1px,.22cqi) solid #F5F3EC;outline-offset:max(1px,.15cqi)}
+.ball.gd{outline:max(1px,.28cqi) solid #FFD24A;outline-offset:max(1px,.15cqi)}
+.chip .fls{font:700 .6rem/1 "IBM Plex Sans","Segoe UI",sans-serif;opacity:.85;letter-spacing:.02em}
 /* ---------- v2: controls ---------- */
 body{font-size:15px}
 .top h1{font-weight:600}
@@ -356,6 +360,7 @@ details.help .hint{margin-top:6px}
 /* ---------- v8: special fouls ---------- */
 #spDlg{width:min(520px,94vw)}
 .sp-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.sp-type[data-ft=C]{grid-column:3}
 .sp-type{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:1px solid var(--line);border-radius:9px;background:var(--btn);color:var(--ink);cursor:pointer;font-size:.75rem;line-height:1.2;text-align:center}
 .sp-type b{font:700 1.5rem/1 "Saira Condensed","Arial Narrow",sans-serif}
 .sp-type.on{background:var(--focus);border-color:var(--focus);color:#fff}
@@ -363,6 +368,20 @@ details.help .hint{margin-top:6px}
 .prow .fl{font-weight:700;font-size:max(9px,1.6cqi);color:#FFD24A;margin-left:.2cqi}
 .chip .fl{font:700 .7rem/1 "IBM Plex Sans",sans-serif;margin-left:2px}
 @media (max-width:420px){.sp-types{grid-template-columns:repeat(2,1fr)}}
+/* ---------- v9: shortcut hints ---------- */
+.kh{display:inline-block;font:600 .62rem/1.2 "IBM Plex Sans","Segoe UI",sans-serif;padding:1px 5px;border-radius:4px;border:1px solid currentColor;opacity:.6;margin-left:8px;vertical-align:middle;background:transparent;color:inherit;letter-spacing:0}
+.bigbtn .kh{margin:2px 0 0}
+.pts .kh{margin-left:6px;font-size:.6rem}
+body.nokeys .kh{display:none}
+/* ---------- v10: pre-game phase ---------- */
+#startGameBtn{display:none}
+body.prephase #startGameBtn{display:block}
+body.prephase #startBtn,body.prephase #arrowGroup,body.prephase #nextBtn,body.prephase #shotSub,body.prephase #shotRow,body.prephase #undoBtn,body.prephase #fixBox{display:none!important}
+body.prephase .team-panel .pts,body.prephase .team-panel .row.r2,body.prephase .team-panel .players,body.prephase .team-panel .picker{opacity:.4;pointer-events:none}
+body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;pointer-events:none}
+.startbtn.due{animation:blinkGo 1s ease-in-out infinite}
+@keyframes blinkGo{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--go) 45%,transparent)}}
+.board.prephase .parrow,.board.prephase .stopball{visibility:hidden!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -427,19 +446,20 @@ details.help .hint{margin-top:6px}
         </div>
       </div>
       <button class="btn" id="preBtn" data-act="pre" hidden>Start pre-game clock</button>
-      <button class="startbtn" id="startBtn" data-act="clock">Start clock</button>
+      <button class="startbtn" id="startGameBtn" data-act="startgame">Start game</button>
+      <button class="startbtn" id="startBtn" data-act="clock"><span class="bl">Start clock</span><kbd class="kh">Space</kbd></button>
       <div class="arrowgroup" id="arrowGroup">
-        <button class="bigbtn arrowbtn arrow-end" data-act="arrowset" data-side="home" id="arrowL" aria-label="Arrow to home team" title="Arrow to home team"><svg viewBox="0 0 100 50" aria-hidden="true"><polygon points="100,16 42,16 42,0 0,25 42,50 42,34 100,34"/></svg></button>
-        <button class="bigbtn arrowbtn" data-act="arrow" id="arrowBtn"><span class="bb-main">Flip arrow</span><span class="bb-sub" id="arrowSub">Not set</span></button>
-        <button class="bigbtn arrowbtn arrow-end" data-act="arrowset" data-side="away" id="arrowR" aria-label="Arrow to away team" title="Arrow to away team"><svg viewBox="0 0 100 50" aria-hidden="true"><polygon points="0,16 58,16 58,0 100,25 58,50 58,34 0,34"/></svg></button>
+        <button class="bigbtn arrowbtn arrow-end" data-act="arrowset" data-side="home" id="arrowL" aria-label="Arrow to home team" title="Arrow to home team"><svg viewBox="0 0 100 50" aria-hidden="true"><polygon points="100,16 42,16 42,0 0,25 42,50 42,34 100,34"/></svg><kbd class="kh">←</kbd></button>
+        <button class="bigbtn arrowbtn" data-act="arrow" id="arrowBtn"><span class="bb-main">Flip arrow</span><span class="bb-sub" id="arrowSub">Not set</span><kbd class="kh">A</kbd></button>
+        <button class="bigbtn arrowbtn arrow-end" data-act="arrowset" data-side="away" id="arrowR" aria-label="Arrow to away team" title="Arrow to away team"><svg viewBox="0 0 100 50" aria-hidden="true"><polygon points="0,16 58,16 58,0 100,25 58,50 58,34 0,34"/></svg><kbd class="kh">→</kbd></button>
       </div>
       <button class="bigbtn nextbtn" data-act="next" id="nextBtn">Next period</button>
       <p class="sub" id="shotSub">Shot clock</p>
       <div class="row r2" id="shotRow">
-        <button class="btn" data-act="shot" data-s="24">Reset 24</button>
-        <button class="btn" data-act="shot" data-s="14">Reset 14</button>
+        <button class="btn" data-act="shot" data-s="24">Reset 24<kbd class="kh">S</kbd></button>
+        <button class="btn" data-act="shot" data-s="14">Reset 14<kbd class="kh">D</kbd></button>
       </div>
-      <button class="btn ghost" data-act="undo" id="undoBtn">Undo</button>
+      <button class="btn ghost" data-act="undo" id="undoBtn"><span class="bl">Undo</span><kbd class="kh">Z</kbd></button>
       <details class="more" id="fixBox">
         <summary>Clock and period corrections</summary>
         <div class="stack">
@@ -506,6 +526,7 @@ details.help .hint{margin-top:6px}
       <label class="field check full"><input type="checkbox" id="s-pf"> Track fouls per player (off: team fouls only)</label>
       <label class="field check"><input type="checkbox" id="s-shot"> Use shot clock</label>
       <label class="field check"><input type="checkbox" id="s-sound"> Buzzer sound</label>
+      <label class="field check"><input type="checkbox" id="s-keys"> Show keyboard shortcuts on buttons</label>
       <label class="field check full"><input type="checkbox" id="s-scorers"> Ask for the scorer’s number</label>
       <label class="field check full"><input type="checkbox" id="s-stats"> Stats and score sheet</label>
     </div>
@@ -590,14 +611,17 @@ details.help .hint{margin-top:6px}
   <div class="dlg-body">
     <h2 id="spTitle">Special foul</h2>
     <div class="sp-types">
-      <button type="button" class="sp-type" data-ft="T"><b>T</b><span>Technical</span></button>
-      <button type="button" class="sp-type" data-ft="U"><b>U</b><span>Unsportsmanlike</span></button>
+      <button type="button" class="sp-type" data-ft="T1"><b>T1</b><span>Technical, class 1</span></button>
+      <button type="button" class="sp-type" data-ft="T2"><b>T2</b><span>Technical, class 2</span></button>
+      <button type="button" class="sp-type" data-ft="PV"><b>SF</b><span>Stopping</span></button>
+      <button type="button" class="sp-type" data-ft="RV"><b>FF</b><span>Flagrant</span></button>
       <button type="button" class="sp-type" data-ft="D"><b>D</b><span>Disqualifying</span></button>
-      <button type="button" class="sp-type" data-ft="C"><b>C</b><span>Coach technical</span></button>
+      <button type="button" class="sp-type" data-ft="C"><b>C</b><span>Head coach</span></button>
+      <button type="button" class="sp-type" data-ft="B"><b>B</b><span>Bench</span></button>
     </div>
     <p class="sub" id="spPick" hidden>Choose the player</p>
     <div class="pnums" id="spPlayers" hidden></div>
-    <details class="help"><summary aria-label="Ohje">?</summary><p class="hint">FIBA: a player is disqualified for two technical fouls, two unsportsmanlike fouls or one of each, and immediately for a disqualifying foul. A player’s T, U and D fouls count as personal fouls and team fouls. A coach technical foul isn’t a team foul, and a coach is disqualified after two. Check your league’s rules. A wrong entry can be removed with Undo or Remove foul.</p></details>
+    <details class="help"><summary aria-label="Ohje">?</summary><p class="hint">FIBA 2026 rules: a player is automatically disqualified for two class 1 technical fouls, two flagrant fouls or one of each, and immediately for a disqualifying foul. Class 2 technical fouls and stopping fouls don’t lead to disqualification. All player fouls count as the player’s fouls and as team fouls. Head coach (C) and bench (B) technicals are charged to the head coach and aren’t team fouls; the head coach is disqualified after two C fouls or three C and B fouls combined. The abbreviations are the app’s own, not official score sheet marks. On the scoreboard, special fouls show as outlined balls: a yellow outline means a foul that counts toward disqualification, a white outline another special foul. A wrong entry can be removed with Undo or Remove foul.</p></details>
   </div>
   <div class="dlg-foot"><span></span><div class="right"><button class="btn" id="spCancel">Cancel</button><button class="btn primary" id="spOk" disabled>Record</button></div></div>
 </dialog>
@@ -620,7 +644,7 @@ details.help .hint{margin-top:6px}
     <h3>Scorers and stats</h3>
     <p>When scorers are turned on in Settings, player numbers appear after each score. Pick the scorer or skip. Stats and the score sheet are under the Stats button once they’re turned on.</p>
     <h3>Break and timeout clocks</h3>
-    <p>Before the game you can start the pre-game clock, which sounds 3 minutes before tip-off and at tip-off. A break clock starts when the period changes, and a timeout starts the timeout clock. They show on the board in place of the game clock, with the game clock shown smaller below. The buzzer sounds when time runs out. Starting the game clock ends a break or timeout. The break clock can be paused and adjusted, and the pre-game clock can be set to end at a given time of day (Starts at). While a break clock is running, Space pauses or resumes it and doesn’t start the game clock. Lengths are set in Settings.</p>
+    <p>A new game starts in the pre-game phase: you can start the pre-game clock, which sounds 3 minutes before tip-off and at tip-off. Start game moves to period 1, and the game clock is started separately when play begins. The possession arrow is available only once the game has started. A break clock starts when the period changes, and a timeout starts the timeout clock. They show on the board in place of the game clock, with the game clock shown smaller below. The buzzer sounds when time runs out. Starting the game clock ends a break or timeout. The break clock can be paused and adjusted, and the pre-game clock can be set to end at a given time of day (Starts at). While a break clock is running, Space pauses or resumes it and doesn’t start the game clock. Lengths are set in Settings.</p>
     <h3>Possession arrow</h3>
     <p>If the game clock is started for the first time and the arrow hasn’t been set, the arrow blinks until it’s set.</p>
     <h3>Log</h3>
@@ -673,13 +697,13 @@ const DEF_ROSTER='4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15';
 function defCfg(){return{
   home:{name:'Home',color:'#2B6DE8',roster:DEF_ROSTER,logo:''},
   away:{name:'Away',color:'#E2462F',roster:DEF_ROSTER,logo:''},
-  periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true,playerFouls:true,trackScorers:false,stats:false,preMin:20,toSec:60,breakMin:2,halfMin:15,autoBreak:true
+  periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true,playerFouls:true,trackScorers:false,stats:false,showKeys:true,preMin:20,toSec:60,breakMin:2,halfMin:15,autoBreak:true
 };}
 function periodLen(p,c){c=c||CFG;return Math.round((p<=c.periods?c.periodMin:c.otMin)*60000);}
 function defState(c){return{
   period:1,clock:{running:false,base:periodLen(1,c),startedAt:0},shot:{base:24000,startedAt:0},
   score:{home:0,away:0},teamFouls:{home:0,away:0},players:{home:{},away:{}},
-  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null},over:false,aux:null,started:false,special:{home:{},away:{}},coachT:{home:0,away:0}
+  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null},over:false,aux:null,started:false,special:{home:{},away:{}},coachT:{home:0,away:0},benchT:{home:0,away:0},phase:'pre',preEnded:false
 };}
 
 const SCREEN=location.hash==='#display';
@@ -692,7 +716,7 @@ function loadFrom(raw){
       const dc=defCfg();
       CFG=Object.assign(dc,d.CFG,{home:Object.assign(dc.home,d.CFG.home),away:Object.assign(dc.away,d.CFG.away)});
       S=d.S; H=Array.isArray(d.H)?d.H:[];
-      if(!Array.isArray(S.ev))S.ev=[];if(!S.pend)S.pend={home:null,away:null};if(!S.special)S.special={home:{},away:{}};if(!S.coachT)S.coachT={home:0,away:0};
+      if(!Array.isArray(S.ev))S.ev=[];if(!S.pend)S.pend={home:null,away:null};if(!S.special)S.special={home:{},away:{}};if(!S.coachT)S.coachT={home:0,away:0};if(!S.benchT)S.benchT={home:0,away:0};
       return true;
     }
   }catch(e){}
@@ -701,7 +725,7 @@ function loadFrom(raw){
 try{loadFrom(localStorage.getItem(KEY));}catch(e){}
 if(!CFG)CFG=defCfg();
 if(!S||!S.clock)S=defState(CFG);
-if(!Array.isArray(S.ev))S.ev=[];if(!S.pend)S.pend={home:null,away:null};if(!S.special)S.special={home:{},away:{}};if(!S.coachT)S.coachT={home:0,away:0};
+if(!Array.isArray(S.ev))S.ev=[];if(!S.pend)S.pend={home:null,away:null};if(!S.special)S.special={home:{},away:{}};if(!S.coachT)S.coachT={home:0,away:0};if(!S.benchT)S.benchT={home:0,away:0};
 
 function save(){if(SCREEN)return;try{localStorage.setItem(KEY,JSON.stringify({CFG,S,H:H.slice(-20)}))}catch(e){}}
 function commit(){save();renderAll();}
@@ -724,7 +748,9 @@ function shotLeft(){const s=S.shot;return S.clock.running?Math.max(0,s.base-(now
 function shotShown(){return CFG.shotClock&&gameLeft()>=shotLeft();}
 function stopClock(){if(!S.clock.running)return;const g=gameLeft(),s=shotLeft();S.clock.base=g;S.shot.base=s;S.clock.running=false;}
 function rebase(){const g=gameLeft(),s=shotLeft(),t=now();S.clock.base=g;S.shot.base=s;S.clock.startedAt=t;S.shot.startedAt=t;}
+const isPre=()=>S.phase==='pre';
 function toggleClock(){
+  if(isPre()){toast('Start the game first');return;}
   if(S.clock.running){stopClock();logE('Clock stopped');commit();return;}
   if(S.over){toast('The game is over. Undo, or start a new game in Settings.');return;}
   if(gameLeft()<=0){toast('The period is over. Press Next period.');return;}
@@ -811,8 +837,9 @@ function auxAt(){
 function endAux(byTime){
   const a=S.aux;if(!a)return;const lb=auxLabel();S.aux=null;
   if(byTime)buzz();
-  const msg=a.k==='pre'?'Game starts':(a.k==='to'?'Timeout over':lb+' over');
-  toast(msg+(a.k!=='to'?': '+periodName():''));logE(msg+(byTime?'':' (ended manually)'),true);commit();
+  const msg=a.k==='pre'?'Pre-game time over':(a.k==='to'?'Timeout over':lb+' over');
+  if(a.k==='pre'&&byTime)S.preEnded=true;
+  toast(a.k==='pre'?msg+'. Press Start game.':msg+(a.k!=='to'?': '+periodName():''));logE(msg+(byTime?'':' (ended manually)'),true);commit();
 }
 
 /* ---------- Actions ---------- */
@@ -869,7 +896,15 @@ function setPeriod(p){
 }
 function setArrow(side){if(S.arrow===side)return;pushHist('Arrow');S.arrow=side;logE('Possession arrow: '+nm(side));commit();}
 function flipArrow(){pushHist('Arrow');S.arrow=S.arrow==='home'?'away':'home';logE('Possession arrow: '+nm(S.arrow));commit();}
-function newGame(){H=[];S=defState(CFG);evPush('per',null);logE('New game: '+nm('home')+' – '+nm('away'),true);commit();toast('New game');}
+function startGame(){
+  if(!isPre())return;
+  pushHist('Game started',true);
+  if(S.aux){logE(auxLabel()+' ended',true);S.aux=null;}
+  S.phase='game';S.preEnded=false;
+  evPush('per',null);
+  logE('Game started: '+periodName(),true);toast(periodName()+'. Start the clock when play begins.');commit();
+}
+function newGame(){H=[];S=defState(CFG);logE('New game: '+nm('home')+' – '+nm('away'),true);commit();toast('New game');}
 
 /* ---------- Buzzer ---------- */
 let actx=null;
@@ -893,9 +928,17 @@ function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('sho
 
 /* ---------- Rendering ---------- */
 function roster(t){return sortNums(parseNums(CFG[t].roster)).slice(0,20);}
-function spOut(sp){if(!sp)return '';if(sp.D>0)return 'disqualifying foul';if(sp.T>=2)return '2 technical fouls';if(sp.U>=2)return '2 unsportsmanlike fouls';if(sp.T>0&&sp.U>0)return 'technical and unsportsmanlike foul';return '';}
+function spOut(sp){
+  if(!sp)return '';
+  const t1=(sp.T1||0)+(sp.T||0),rv=(sp.RV||0)+(sp.U||0);
+  if(sp.D>0)return 'disqualifying foul';
+  if(t1>=2)return '2 class 1 technical fouls';
+  if(rv>=2)return '2 flagrant fouls';
+  if(t1>0&&rv>0)return 'class 1 technical and flagrant foul';
+  return '';
+}
 function isOut(t,p){return (S.players[t][p]||0)>=CFG.foulOut||!!(S.special[t][p]&&S.special[t][p].out);}
-function spList(t,p){return (S.special[t][p]&&S.special[t][p].list)||[];}
+function spList(t,p){return ((S.special[t][p]&&S.special[t][p].list)||[]).map(x=>FT_SHORT[x]||x);}
 function foulClass(f,t,p){if(t&&p&&isOut(t,p))return 'out';return f>=CFG.foulOut?'out':(f===CFG.foulOut-1?'warn':(f===0?'zero':''));}
 function boardDocs(){const a=[document];if(popWin&&!popWin.closed){try{a.push(popWin.document);}catch(e){popWin=null;}}else popWin=null;return a;}
 
@@ -917,13 +960,13 @@ function renderBoard(doc){
     const nums=roster(t);
     g('b-'+t+'-players').innerHTML='<div class="plist-h">Player fouls</div>'+nums.map(p=>{
       const f=S.players[t][p]||0;
-      let bl='';for(let i=1;i<=f;i++)bl+='<span class="ball'+(i>=CFG.foulOut?' red':'')+'"></span>';
-      bl+=spList(t,p).map(x=>'<span class="fl">'+x+'</span>').join('');
+      const raw=(S.special[t][p]&&S.special[t][p].list)||[],nn=Math.max(0,f-raw.length);let bl='';
+      for(let i=1;i<=f;i++){const ty=i>nn?raw[i-nn-1]:'',gd=['T1','RV','D','T','U'].includes(ty);bl+='<span class="ball'+(i>=CFG.foulOut?' red':'')+(ty?(gd?' gd':' sp'):'')+'"></span>';}
       return '<div class="prow '+foulClass(f,t,p)+'" aria-label="Number '+p+', '+f+' fouls"><span class="pn">#'+p+'</span><span class="balls">'+bl+'</span></div>';
     }).join('');
   });
-  g('b-period').textContent=S.aux?auxLabel():(S.over?'Final':periodName());
-  if(bd){bd.classList.toggle('auxon',!!S.aux);bd.classList.toggle('needarrow',!!S.started&&!S.arrow&&!S.over);}
+  g('b-period').textContent=S.aux?auxLabel():(S.over?'Final':(isPre()?'Before the game':periodName()));
+  if(bd){bd.classList.toggle('auxon',!!S.aux);bd.classList.toggle('prephase',isPre());bd.classList.toggle('needarrow',!!S.started&&!S.arrow&&!S.over);}
   const ar=g('b-arrow');ar.classList.toggle('set',!!S.arrow);ar.classList.toggle('left',S.arrow==='home');
   doc.__c={};drawBoard(doc);
 }
@@ -948,9 +991,9 @@ function buildTeamPanels(){
     el.innerHTML=
       '<h2 class="tp-head"><img class="tp-logo" alt="" hidden><input class="tp-name" data-team="'+t+'" maxlength="24" aria-label="Team name" title="Tap to rename"><span class="tp-score"></span></h2>'+
       '<div class="row r3 pts">'+
-        '<button class="btn" data-act="pts" data-team="'+t+'" data-n="1">+1</button>'+
-        '<button class="btn" data-act="pts" data-team="'+t+'" data-n="2">+2</button>'+
-        '<button class="btn" data-act="pts" data-team="'+t+'" data-n="3">+3</button>'+
+        '<button class="btn" data-act="pts" data-team="'+t+'" data-n="1">+1<kbd class="kh">'+(t==='home'?'1':'8')+'</kbd></button>'+
+        '<button class="btn" data-act="pts" data-team="'+t+'" data-n="2">+2<kbd class="kh">'+(t==='home'?'2':'9')+'</kbd></button>'+
+        '<button class="btn" data-act="pts" data-team="'+t+'" data-n="3">+3<kbd class="kh">'+(t==='home'?'3':'0')+'</kbd></button>'+
       '</div>'+
       '<div class="picker" hidden><div class="picker-h"><span class="picker-t"></span><button class="btn small ghost" data-act="skipscorer" data-team="'+t+'">Skip</button></div><div class="pnums"></div></div>'+
       '<div class="row r2">'+
@@ -996,18 +1039,21 @@ function renderAll(){
       const f=S.players[t][p]||0,fc=foulClass(f,t,p);
       const cls=fc==='out'||fc==='warn'?' '+fc:'';
       let dots='';for(let i=0;i<CFG.foulOut;i++)dots+='<i'+(i<f?(i>=CFG.foulOut-1?' class="f r"':' class="f"'):'')+'></i>';
-      return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Foul on number '+p+', '+f+' fouls"><span class="num">#'+p+'</span><span class="pf">'+dots+spList(t,p).map(x=>'<b class="fl">'+x+'</b>').join('')+'</span></button>';
+      return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Foul on number '+p+', '+f+' fouls"><span class="num">#'+p+'</span><span class="pf">'+dots+'</span>'+(spList(t,p).length?'<span class="fls">'+spList(t,p).join(' ')+'</span>':'')+'</button>';
     }).join(''):'<span class="empty-roster">Add player numbers with Edit players.</span>';
   });
   $('arrowSub').textContent=S.arrow==='home'?'← '+nm('home'):(S.arrow==='away'?nm('away')+' →':(S.started?'Set the arrow!':'Not set'));
   $('arrowGroup').classList.toggle('needs',!!S.started&&!S.arrow&&!S.over);
   $('arrowL').classList.toggle('on',S.arrow==='home');$('arrowR').classList.toggle('on',S.arrow==='away');
   $('nextBtn').textContent=S.over?'Start new game':(S.period>=CFG.periods?'End game':'Next period');
-  const u=H[H.length-1];$('undoBtn').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
+  const u=H[H.length-1];$('undoBtn').querySelector('.bl').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
   $('statsBtn').hidden=!CFG.stats;
+  document.body.classList.toggle('nokeys',CFG.showKeys===false);
   $('auxBox').hidden=!S.aux;if(S.aux){$('auxLabel').textContent=auxLabel();$('auxTime').textContent=fmtAux(auxLeft());$('auxPause').textContent=S.aux.running===false?'Resume':'Pause';$('auxAtBtn').hidden=S.aux.k!=='pre';$('auxIn').placeholder=S.aux.k==='pre'?'e.g. 12:00 or 18:30':'e.g. 1:30';$('auxBox').classList.toggle('paused',S.aux.running===false);}
-  $('preBtn').hidden=!!(S.aux||S.started||S.over||S.period!==1||S.clock.running||S.clock.base!==periodLen(1));
+  $('preBtn').hidden=!(isPre()&&!S.aux);
+  document.body.classList.toggle('prephase',isPre());
+  $('startGameBtn').classList.toggle('due',!!S.preEnded&&isPre());
   const ps=$('periodSel'),maxP=Math.max(S.period,CFG.periods)+1;let o='';
   for(let p=1;p<=maxP;p++)o+='<option value="'+p+'"'+(p===S.period?' selected':'')+'>'+periodName(p)+'</option>';
   if(document.activeElement!==ps)ps.innerHTML=o;
@@ -1035,7 +1081,7 @@ function frame(){
   if(inLast2()!==lastL2)renderAll();
   boardDocs().forEach(drawBoard);
   if(!SCREEN&&S.clock.running!==lastRunning){
-    const b=$('startBtn');b.textContent=S.clock.running?'Stop clock':'Start clock';b.classList.toggle('running',S.clock.running);lastRunning=S.clock.running;
+    const b=$('startBtn');b.querySelector('.bl').textContent=S.clock.running?'Stop clock':'Start clock';b.classList.toggle('running',S.clock.running);lastRunning=S.clock.running;
   }
   if(!SCREEN){const due=gameLeft()<=0;if(due!==lastDue){$('nextBtn').classList.toggle('next-due',due);lastDue=due;}}
   requestAnimationFrame(frame);
@@ -1069,6 +1115,7 @@ $('controls').addEventListener('click',e=>{
   switch(d.act){
     case 'clock':toggleClock();break;
     case 'pre':startPre();break;
+    case 'startgame':startGame();break;
     case 'auxadj':auxAdjust(+d.ms);break;
     case 'auxend':endAux(false);break;
     case 'auxpause':auxPause();break;
@@ -1139,6 +1186,11 @@ $('popBtn').addEventListener('click',openPop);
 document.addEventListener('keydown',e=>{
   if(SCREEN){if(e.key.toLowerCase()==='f'&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});return;}
   if(document.querySelector('dialog[open]'))return;
+  if(isPre()&&!e.target.closest('input,select,textarea')){
+    const kk=e.key.toLowerCase();
+    if(kk===' '){e.preventDefault();if(S.aux)auxPause();else toast('Start the game first');return;}
+    if(kk!=='f'&&kk!=='escape')return;
+  }
   if(e.target.closest&&e.target.closest('input,select,textarea'))return;
   const k=e.key.toLowerCase();
   if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();undo();return;}
@@ -1225,9 +1277,12 @@ function assignScorer(t,p){
 }
 function skipScorer(t){S.pend[t]=null;commit();}
 
-/* Special fouls (T, U, D, coach C) */
-const FT_NAME={T:'Technical foul',U:'Unsportsmanlike foul',D:'Disqualifying foul',C:'Coach technical foul'};
+/* Special fouls (FIBA 2026: T1, T2, stopping, flagrant, D, coach C, bench B) */
+const FT_NAME={T1:'Technical foul (class 1)',T2:'Technical foul (class 2)',PV:'Stopping foul',RV:'Flagrant foul',D:'Disqualifying foul',C:'Head coach technical foul',B:'Bench technical foul',T:'Technical foul',U:'Unsportsmanlike foul'};
+const FT_SHORT={T1:'T1',T2:'T2',PV:'SF',RV:'FF',D:'D',T:'T',U:'U'};
+const COACH_FT=['C','B'];
 let spTeam='home',spType=null,spPlayer=null;
+function coachOut(t){const c=S.coachT[t]||0,b=S.benchT[t]||0;return c>=2||c+b>=3;}
 function openSpecial(t){
   spTeam=t;spType=null;spPlayer=null;
   $('spTitle').textContent='Special foul: '+nm(t);
@@ -1235,27 +1290,30 @@ function openSpecial(t){
 }
 function renderSpecial(){
   document.querySelectorAll('#spDlg .sp-type').forEach(b=>b.classList.toggle('on',b.dataset.ft===spType));
-  const needP=spType&&spType!=='C';
+  const needP=spType&&!COACH_FT.includes(spType);
   $('spPick').hidden=!needP;$('spPlayers').hidden=!needP;
   if(needP){
     $('spPlayers').innerHTML=roster(spTeam).map(p=>'<button type="button" class="btn small'+(p===spPlayer?' primary':'')+'" data-p="'+p+'"'+(isOut(spTeam,p)?' disabled':'')+'>#'+p+'</button>').join('')||'<span class="hint">Add player numbers with Edit players.</span>';
   }
-  $('spOk').disabled=!(spType==='C'||(spType&&spPlayer));
+  $('spOk').disabled=!(spType&&(COACH_FT.includes(spType)||spPlayer));
 }
 function applySpecial(){
   const t=spTeam,ft=spType,p=spPlayer;if(!ft)return;
-  if(ft==='C'){
-    pushHist('Coach technical '+nm(t));
-    S.coachT[t]++;evPush('cfoul',t,{c:S.coachT[t]});
-    logE('Coach technical foul '+nm(t)+' ('+S.coachT[t]+')');
-    if(S.coachT[t]>=2)toast(nm(t)+': coach disqualified (2 technical fouls)');else toast('Coach technical foul, '+nm(t));
+  if(COACH_FT.includes(ft)){
+    const wasOut=coachOut(t);
+    pushHist(FT_NAME[ft]+' '+nm(t));
+    if(ft==='C')S.coachT[t]++;else S.benchT[t]++;
+    evPush('cfoul',t,{cf:ft,c:(S.coachT[t]||0)+(S.benchT[t]||0)});
+    logE(FT_NAME[ft]+' '+nm(t)+' (charged to head coach, not a team foul)');
+    if(!wasOut&&coachOut(t)){toast(nm(t)+': head coach disqualified');logE(nm(t)+': head coach disqualified',true);}
+    else toast(FT_NAME[ft]+', '+nm(t));
     commit();return;
   }
   if(!p||isOut(t,p))return;
   pushHist(FT_NAME[ft]+' #'+p+' '+nm(t));
   S.players[t][p]=(S.players[t][p]||0)+1;S.teamFouls[t]++;
-  const sp=S.special[t][p]||(S.special[t][p]={T:0,U:0,D:0,list:[],out:''});
-  sp[ft]++;sp.list.push(ft);sp.out=spOut(sp);
+  const sp=S.special[t][p]||(S.special[t][p]={list:[],out:''});
+  sp[ft]=(sp[ft]||0)+1;sp.list.push(ft);sp.out=spOut(sp);
   evPush('foul',t,{p,c:S.players[t][p],tf:S.teamFouls[t],ft});
   logE(FT_NAME[ft]+' #'+p+' '+nm(t)+' (player has '+S.players[t][p]+'), team fouls '+S.teamFouls[t]);
   const why=sp.out||((S.players[t][p]>=CFG.foulOut)?CFG.foulOut+' fouls':'');
@@ -1264,7 +1322,7 @@ function applySpecial(){
   if(S.teamFouls[t]===CFG.bonus-1)setTimeout(()=>toast(nm(t)+' is in the bonus'),1500);
   commit();
 }
-document.querySelectorAll('#spDlg .sp-type').forEach(b=>b.addEventListener('click',()=>{spType=b.dataset.ft;if(spType==='C')spPlayer=null;renderSpecial();}));
+document.querySelectorAll('#spDlg .sp-type').forEach(b=>b.addEventListener('click',()=>{spType=b.dataset.ft;if(COACH_FT.includes(spType))spPlayer=null;renderSpecial();}));
 $('spPlayers').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b||b.disabled)return;spPlayer=b.dataset.p;renderSpecial();});
 $('spCancel').addEventListener('click',()=>$('spDlg').close());
 $('spOk').addEventListener('click',()=>{$('spDlg').close();applySpecial();});
@@ -1381,7 +1439,7 @@ function fillForm(c){
   $('s-periods').value=String(c.periods);$('s-ot').value=c.otMin;
   $('s-tomode').value=c.toMode;$('s-topg').value=c.toPerGame;
   $('s-bonus').value=c.bonus;$('s-foulout').value=c.foulOut;
-  $('s-shot').checked=c.shotClock;$('s-sound').checked=c.sound;$('s-pf').checked=c.playerFouls!==false;$('s-scorers').checked=!!c.trackScorers;$('s-stats').checked=!!c.stats;
+  $('s-shot').checked=c.shotClock;$('s-sound').checked=c.sound;$('s-pf').checked=c.playerFouls!==false;$('s-scorers').checked=!!c.trackScorers;$('s-stats').checked=!!c.stats;$('s-keys').checked=c.showKeys!==false;
   $('s-pre').value=c.preMin;$('s-tosec').value=c.toSec;$('s-brk').value=c.breakMin;$('s-half').value=c.halfMin;$('s-autobrk').checked=c.autoBreak!==false;
   syncSettingVisibility();
 }
@@ -1393,7 +1451,7 @@ function readForm(){
   c.periods=+$('s-periods').value===2?2:4;c.otMin=num('s-ot',CFG.otMin,1,20);
   c.toMode=$('s-tomode').value==='game'?'game':'fiba';c.toPerGame=Math.round(num('s-topg',CFG.toPerGame,0,10));
   c.bonus=Math.round(num('s-bonus',CFG.bonus,1,15));c.foulOut=Math.round(num('s-foulout',CFG.foulOut,1,10));
-  c.shotClock=$('s-shot').checked;c.sound=$('s-sound').checked;c.playerFouls=$('s-pf').checked;c.trackScorers=$('s-scorers').checked;c.stats=$('s-stats').checked;
+  c.shotClock=$('s-shot').checked;c.sound=$('s-sound').checked;c.playerFouls=$('s-pf').checked;c.trackScorers=$('s-scorers').checked;c.stats=$('s-stats').checked;c.showKeys=$('s-keys').checked;
   c.preMin=num('s-pre',CFG.preMin,1,90);c.toSec=Math.round(num('s-tosec',CFG.toSec,10,300));c.breakMin=num('s-brk',CFG.breakMin,0,30);c.halfMin=num('s-half',CFG.halfMin,0,30);c.autoBreak=$('s-autobrk').checked;
   return c;
 }
@@ -1403,7 +1461,7 @@ function cleanCfg(o){
   TEAMS.forEach(t=>{c[t]=Object.assign(defCfg()[t],o[t]||{});c[t].name=String(c[t].name).slice(0,24);c[t].roster=String(c[t].roster);if(!/^#[0-9a-f]{6}$/i.test(c[t].color))c[t].color=defCfg()[t].color;if(!(typeof c[t].logo==='string'&&c[t].logo.startsWith('data:image/')))c[t].logo='';});
   ['periodMin','otMin','toPerGame','bonus','foulOut','periods','preMin','toSec','breakMin','halfMin'].forEach(k=>{c[k]=+c[k];if(!isFinite(c[k]))c[k]=dc[k];});
   c.periods=c.periods===2?2:4;c.toMode=c.toMode==='game'?'game':'fiba';
-  c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;c.trackScorers=!!c.trackScorers;c.stats=!!c.stats;c.autoBreak=c.autoBreak!==false;
+  c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;c.trackScorers=!!c.trackScorers;c.stats=!!c.stats;c.autoBreak=c.autoBreak!==false;c.showKeys=c.showKeys!==false;
   return c;
 }
 $('settingsBtn').addEventListener('click',()=>{fillForm(CFG);disarmNew();renderTplSel();$('tplCode').value='';dlg.showModal();TEAMS.forEach(updateSugg);});
@@ -1565,7 +1623,7 @@ const perShort=p=>p>CFG.periods?'OT'+(p-CFG.periods):String(p);
 function evText(e){
   if(e.k==='pts')return e.n>0?'+'+e.n:'Correction −'+Math.abs(e.n);
   if(e.k==='foul')return e.ft?FT_NAME[e.ft]+(e.p?' (player’s '+e.c+')':''):(e.p?'Foul (player’s '+e.c+')':'Team foul');
-  if(e.k==='cfoul')return 'Coach technical foul ('+e.c+')';
+  if(e.k==='cfoul')return FT_NAME[e.cf||'C']+' (head coach’s '+e.c+')';
   if(e.k==='to')return e.min?'Timeout (min '+e.min+')':'Timeout';
   if(e.k==='per')return periodName(e.per)+' started';
   if(e.k==='end')return 'End of '+periodName(e.per).toLowerCase();
@@ -1584,7 +1642,7 @@ function renderStats(){
       rows+='<tr><td>#'+esc(p)+'</td><td>'+o.pts+'</td><td>'+o[1]+'</td><td>'+o[2]+'</td><td>'+o[3]+'</td><td>'+f+'</td><td>'+esc(spList(t,p).join(' '))+(isOut(t,p)?' ✕':'')+'</td></tr>';
     });
     if(d.other[t])rows+='<tr><td>Not recorded</td><td>'+d.other[t]+'</td><td></td><td></td><td></td><td></td><td></td></tr>';
-    if(S.coachT[t])rows+='<tr><td>Coach</td><td></td><td></td><td></td><td></td><td></td><td>'+'C '.repeat(S.coachT[t]).trim()+'</td></tr>';
+    if(S.coachT[t]||S.benchT[t])rows+='<tr><td>Head coach</td><td></td><td></td><td></td><td></td><td></td><td>'+('C '.repeat(S.coachT[t]||0)+'B '.repeat(S.benchT[t]||0)).trim()+(coachOut(t)?' ✕':'')+'</td></tr>';
     h+='<div><div class="st-h"><span class="swatch" style="background:'+esc(CFG[t].color)+'"></span>'+esc(nm(t))+'</div><div class="st-wrap"><table class="st-table"><thead><tr><th>Nro</th><th>Pisteet</th><th>1p</th><th>2p</th><th>3p</th><th>Fouls</th><th>Spec.</th></tr></thead><tbody>'+rows+
       '</tbody><tfoot><tr><td>Total</td><td>'+S.score[t]+'</td><td></td><td></td><td></td><td>'+(CFG.playerFouls?tf:'')+'</td><td></td></tr></tfoot></table></div></div>';
   });
@@ -1598,8 +1656,8 @@ function statsText(){
   const d=statsData();let out=nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away')+'\n';
   TEAMS.forEach(t=>{
     out+='\n'+nm(t)+'\nNo.\tPoints\t1p\t2p\t3p\tFouls\n';
-    teamPlayers(t).forEach(p=>{const o=d.pl[t][p]||{pts:0,1:0,2:0,3:0};out+='#'+p+'\t'+o.pts+'\t'+o[1]+'\t'+o[2]+'\t'+o[3]+'\t'+(S.players[t][p]||0)+(spList(t,p).length?'\t'+spList(t,p).join(' '):'')+(isOut(t,p)?' (out)':'')+'\n';});
-    if(S.coachT[t])out+='Coach technicals\t'+S.coachT[t]+'\n';
+    teamPlayers(t).forEach(p=>{const o=d.pl[t][p]||{pts:0,1:0,2:0,3:0};out+='#'+p+'\t'+o.pts+'\t'+o[1]+'\t'+o[2]+'\t'+o[3]+'\t'+(S.players[t][p]||0)+(spList(t,p).length?'\t'+spList(t,p).join(' '):'')+(isOut(t,p)?' (disqualified)':'')+'\n';});
+    if(S.coachT[t]||S.benchT[t])out+='Head coach\tC '+(S.coachT[t]||0)+', B '+(S.benchT[t]||0)+(coachOut(t)?' (disqualified)':'')+'\n';
     if(d.other[t])out+='Not recorded\t'+d.other[t]+'\n';
   });
   out+='\nScore sheet\nPeriod\tTime\tTeam\tNo.\tEvent\tScore\n'+sheetRows().map(r=>r.join('\t')).join('\n');
