@@ -382,6 +382,13 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 .startbtn.due{animation:blinkGo 1s ease-in-out infinite}
 @keyframes blinkGo{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--go) 45%,transparent)}}
 .board.prephase .parrow,.board.prephase .stopball{visibility:hidden!important}
+/* ---------- v11: pre-game box ---------- */
+.auxbtns{display:flex;gap:8px}
+.auxbtns .btn{flex:1}
+.aux-pre{display:flex;flex-direction:column;gap:6px}
+.aux-pre[hidden]{display:none}
+.aux-f{display:grid;grid-template-columns:1fr 92px auto;gap:6px;align-items:center;font-size:.85rem}
+.aux-f .tin{min-height:34px;padding:4px 8px;font-size:.95rem}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -433,19 +440,20 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
     <div class="panel clockpanel">
       <div class="auxbox" id="auxBox" hidden>
         <div class="aux-top"><span class="aux-label" id="auxLabel"></span><span class="aux-time" id="auxTime"></span></div>
-        <div class="row r4">
+        <div class="auxbtns">
           <button class="btn small" data-act="auxpause" id="auxPause">Pysäytä</button>
           <button class="btn small" data-act="auxadj" data-ms="-60000">−1 min</button>
           <button class="btn small" data-act="auxadj" data-ms="60000">+1 min</button>
-          <button class="btn small" data-act="auxend">Lopeta</button>
+          <button class="btn small" data-act="auxend" id="auxEnd">Lopeta</button>
         </div>
-        <div class="row aux-set">
-          <input class="tin" id="auxIn" inputmode="decimal" autocomplete="off" placeholder="esim. 12:00" aria-label="Taukokellon aika">
-          <button class="btn small" data-act="auxset">Aseta aika</button>
-          <button class="btn small" data-act="auxat" id="auxAtBtn">Alkaa klo</button>
+        <div class="aux-pre" id="auxPreRow">
+          <div class="aux-f"><label for="auxMin">Alkaa minuutin päästä</label><input class="tin" id="auxMin" inputmode="decimal" autocomplete="off" placeholder="15"><button class="btn small" data-act="auxmin">Aseta</button></div>
+          <div class="aux-f"><label for="auxClock">Alkaa klo</label><input class="tin" id="auxClock" inputmode="decimal" autocomplete="off" placeholder="18.30"><button class="btn small" data-act="auxat">Aseta</button></div>
+        </div>
+        <div class="aux-pre" id="auxSetRow">
+          <div class="aux-f"><label for="auxIn">Aseta aika</label><input class="tin" id="auxIn" inputmode="decimal" autocomplete="off" placeholder="1:30"><button class="btn small" data-act="auxset">Aseta</button></div>
         </div>
       </div>
-      <button class="btn" id="preBtn" data-act="pre" hidden>Käynnistä ottelua edeltävä kello</button>
       <button class="startbtn" id="startGameBtn" data-act="startgame">Aloita ottelu</button>
       <button class="startbtn" id="startBtn" data-act="clock"><span class="bl">Käynnistä kello</span><kbd class="kh">Välilyönti</kbd></button>
       <div class="arrowgroup" id="arrowGroup">
@@ -644,7 +652,7 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
     <h3>Pisteentekijät ja tilastot</h3>
     <p>Kun pisteentekijät on otettu asetuksista käyttöön, pisteiden jälkeen näytetään pelinumerot. Valitse tekijä tai ohita. Tilastot ja pöytäkirja löytyvät Tilastot-painikkeesta, kun ne on otettu käyttöön.</p>
     <h3>Taukokellot ja aikalisät</h3>
-    <p>Uusi ottelu alkaa ottelua edeltävästä vaiheesta: voit käynnistää ottelua edeltävän kellon, joka soi 3 minuuttia ennen alkua ja alussa. Aloita ottelu siirtää jaksoon 1, ja pelikello käynnistetään erikseen, kun peli alkaa. Hallintanuoli on käytössä vasta ottelun alettua. Jakson vaihtuessa käynnistyy taukokello, ja aikalisä käynnistää aikalisäkellon. Ne näkyvät taululla pelikellon paikalla, ja pelikello näkyy pienenä alla. Summeri soi, kun aika loppuu. Pelikellon käynnistys lopettaa tauon tai aikalisän. Taukokellon voi pysäyttää ja säätää, ja ottelua edeltävän kellon voi asettaa päättymään tiettyyn kellonaikaan (Alkaa klo). Kun taukokello on käynnissä, välilyönti pysäyttää tai jatkaa taukokelloa eikä käynnistä pelikelloa. Pituudet säädetään asetuksista.</p>
+    <p>Uusi ottelu alkaa ottelua edeltävästä vaiheesta: ottelua edeltävän kellon voi asettaa alkamaan tietyn minuuttimäärän päästä tai tiettyyn kellonaikaan, ja se soi 3 minuuttia ennen alkua ja alussa. Aloita ottelu siirtää jaksoon 1, ja pelikello käynnistetään erikseen, kun peli alkaa. Hallintanuoli on käytössä vasta ottelun alettua. Jakson vaihtuessa käynnistyy taukokello, ja aikalisä käynnistää aikalisäkellon. Ne näkyvät taululla pelikellon paikalla, ja pelikello näkyy pienenä alla. Summeri soi, kun aika loppuu. Pelikellon käynnistys lopettaa tauon tai aikalisän. Taukokellon voi pysäyttää ja säätää, ja ottelua edeltävän kellon voi asettaa päättymään tiettyyn kellonaikaan (Alkaa klo). Kun taukokello on käynnissä, välilyönti pysäyttää tai jatkaa taukokelloa eikä käynnistä pelikelloa. Pituudet säädetään asetuksista.</p>
     <h3>Hallintanuoli</h3>
     <p>Jos pelikello käynnistetään ensimmäisen kerran eikä nuolta ole asetettu, nuoli vilkkuu kunnes se asetetaan.</p>
     <h3>Loki</h3>
@@ -827,13 +835,22 @@ function auxSet(){
 }
 function auxAt(){
   const a=S.aux;if(!a)return;
-  const m=/^(\d{1,2})[:.](\d{2})$/.exec($('auxIn').value.trim());
-  if(!m||+m[1]>23||+m[2]>59){toast('Anna kellonaika muodossa 18.30');$('auxIn').focus();return;}
+  const m=/^(\d{1,2})[:.](\d{2})$/.exec($('auxClock').value.trim());
+  if(!m||+m[1]>23||+m[2]>59){toast('Anna kellonaika muodossa 18.30');$('auxClock').focus();return;}
   const d=new Date();d.setHours(+m[1],+m[2],0,0);const ms=d.getTime()-now();
   if(ms<=0){toast('Kellonaika on jo mennyt');return;}
   a.base=ms;a.startedAt=now();a.running=true;a.w3=ms<=180000;
-  logE('Ottelu alkaa klo '+m[1]+'.'+m[2],true);$('auxIn').value='';$('auxIn').blur();commit();
+  logE('Ottelu alkaa klo '+m[1]+'.'+m[2],true);$('auxClock').value='';$('auxClock').blur();commit();
 }
+function auxMin(){
+  const a=S.aux;if(!a)return;
+  const v=$('auxMin').value.trim().replace(',','.');
+  const ms=v.includes(':')?parseTime(v):(/^\d+(\.\d+)?$/.test(v)?Math.round(parseFloat(v)*60000):null);
+  if(ms===null||ms<=0){toast('Anna minuutit, esim. 15');$('auxMin').focus();return;}
+  a.base=ms;a.startedAt=now();a.running=true;a.w3=ms<=180000;
+  logE('Ottelu alkaa '+fmtAux(ms)+' kuluttua',true);$('auxMin').value='';$('auxMin').blur();commit();
+}
+function ensurePre(){if(isPre()&&!S.aux&&!S.preEnded){S.aux={k:'pre',tm:null,base:CFG.preMin*60000,startedAt:now(),running:false,w3:CFG.preMin*60000<=180000};}}
 function endAux(byTime){
   const a=S.aux;if(!a)return;const lb=auxLabel();S.aux=null;
   if(byTime)buzz();
@@ -904,7 +921,7 @@ function startGame(){
   evPush('per',null);
   logE('Ottelu aloitettu: '+periodName(),true);toast(periodName()+'. Käynnistä kello, kun peli alkaa.');commit();
 }
-function newGame(){H=[];S=defState(CFG);logE('Uusi peli: '+nm('home')+' – '+nm('away'),true);commit();toast('Uusi peli');}
+function newGame(){H=[];S=defState(CFG);ensurePre();logE('Uusi peli: '+nm('home')+' – '+nm('away'),true);commit();toast('Uusi peli');}
 
 /* ---------- Buzzer ---------- */
 let actx=null;
@@ -1045,13 +1062,12 @@ function renderAll(){
   $('arrowSub').textContent=S.arrow==='home'?'← '+nm('home'):(S.arrow==='away'?nm('away')+' →':(S.started?'Aseta nuoli!':'Ei asetettu'));
   $('arrowGroup').classList.toggle('needs',!!S.started&&!S.arrow&&!S.over);
   $('arrowL').classList.toggle('on',S.arrow==='home');$('arrowR').classList.toggle('on',S.arrow==='away');
-  $('nextBtn').textContent=S.over?'Aloita uusi peli':(S.period>=CFG.periods?'Päätä peli':'Seuraava jakso');
+  $('nextBtn').textContent=S.over?'Aloita uusi peli':(S.period>=CFG.periods?'Päätä peli':'Seuraava jakso ('+periodName(S.period+1)+')');
   const u=H[H.length-1];$('undoBtn').querySelector('.bl').textContent=u?'Kumoa: '+u.label:'Kumoa';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
   $('statsBtn').hidden=!CFG.stats;
   document.body.classList.toggle('nokeys',CFG.showKeys===false);
-  $('auxBox').hidden=!S.aux;if(S.aux){$('auxLabel').textContent=auxLabel();$('auxTime').textContent=fmtAux(auxLeft());$('auxPause').textContent=S.aux.running===false?'Jatka':'Pysäytä';$('auxAtBtn').hidden=S.aux.k!=='pre';$('auxIn').placeholder=S.aux.k==='pre'?'esim. 12:00 tai 18.30':'esim. 1:30';$('auxBox').classList.toggle('paused',S.aux.running===false);}
-  $('preBtn').hidden=!(isPre()&&!S.aux);
+  $('auxBox').hidden=!S.aux;if(S.aux){$('auxLabel').textContent=auxLabel();$('auxTime').textContent=fmtAux(auxLeft());const isP=S.aux.k==='pre';$('auxPause').textContent=S.aux.running===false?(isP?'Käynnistä':'Jatka'):'Pysäytä';$('auxPreRow').hidden=!isP;$('auxSetRow').hidden=isP;$('auxEnd').hidden=isP;$('auxBox').classList.toggle('paused',S.aux.running===false);}
   document.body.classList.toggle('prephase',isPre());
   $('startGameBtn').classList.toggle('due',!!S.preEnded&&isPre());
   const ps=$('periodSel'),maxP=Math.max(S.period,CFG.periods)+1;let o='';
@@ -1116,6 +1132,7 @@ $('controls').addEventListener('click',e=>{
     case 'clock':toggleClock();break;
     case 'pre':startPre();break;
     case 'startgame':startGame();break;
+    case 'auxmin':auxMin();break;
     case 'auxadj':auxAdjust(+d.ms);break;
     case 'auxend':endAux(false);break;
     case 'auxpause':auxPause();break;
@@ -1162,6 +1179,8 @@ function applyShotIn(){
 $('timeIn').addEventListener('keydown',e=>{if(e.key==='Enter')applyTimeIn();});
 $('shotIn').addEventListener('keydown',e=>{if(e.key==='Enter')applyShotIn();});
 $('auxIn').addEventListener('keydown',e=>{if(e.key==='Enter')auxSet();});
+$('auxMin').addEventListener('keydown',e=>{if(e.key==='Enter')auxMin();});
+$('auxClock').addEventListener('keydown',e=>{if(e.key==='Enter')auxAt();});
 $('timeIn').addEventListener('focus',()=>{if(!$('timeIn').value){const g=gameLeft(),s=Math.floor(g/1000);$('timeIn').value=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')+'.'+Math.floor(g%1000/100);$('timeIn').select();}});
 $('periodSel').addEventListener('change',e=>{setPeriod(+e.target.value);e.target.blur();});
 
@@ -1540,6 +1559,7 @@ $('saveSet').addEventListener('click',()=>{
   const oldLen=periodLen(1),notStarted=S.period===1&&!S.clock.running&&S.clock.base===oldLen;
   const c=readForm(),lenChanged=c.periodMin!==CFG.periodMin;
   CFG=c;
+  if(isPre()&&S.aux&&S.aux.k==='pre'&&S.aux.running===false)S.aux.base=CFG.preMin*60000;
   if(notStarted){S.clock.base=periodLen(1);}
   else if(lenChanged&&S.period<=CFG.periods){toast('Uusi jakson pituus alkaa seuraavasta jaksosta');}
   logE('Asetukset tallennettu',true);
@@ -1724,6 +1744,7 @@ if(SCREEN){
   document.title='Tulostaulu';
   window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue&&loadFrom(e.newValue))renderAll();});
 }
+if(!SCREEN)ensurePre();
 buildTeamPanels();renderAll();
 if(!SCREEN)logE('Ohjaussivu avattu (tilanne jatkuu tallennetusta)',true);
 requestAnimationFrame(frame);
