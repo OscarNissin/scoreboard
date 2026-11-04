@@ -311,6 +311,16 @@ details.help .hint{margin-top:6px}
 .nextbtn.next-due{box-shadow:0 0 0 4px color-mix(in srgb,var(--focus) 35%,transparent)}
 #statsDlg .dlg-body{max-height:calc(90vh - 70px)}
 @media (max-width:640px){.st-grid{grid-template-columns:1fr}}
+/* ---------- v4: downtime clocks ---------- */
+.auxbox{border:2px solid var(--focus);border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--focus) 8%,var(--surface))}
+.auxbox[hidden]{display:none}
+.aux-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.aux-label{font-weight:600}
+.aux-time{font:700 2.1rem/1 "Saira Condensed","Arial Narrow",sans-serif;font-variant-numeric:tabular-nums}
+.board .period{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.board.auxon .gclock{color:#7FD4FF;text-shadow:0 0 2cqi rgba(127,212,255,.35)}
+.board.auxon .stopball{visibility:hidden!important}
+.sclock.gsmall{color:var(--led);text-shadow:0 0 1.4cqi rgba(255,178,26,.3)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -360,6 +370,15 @@ details.help .hint{margin-top:6px}
 
   <section class="controls" id="controls">
     <div class="panel clockpanel">
+      <div class="auxbox" id="auxBox" hidden>
+        <div class="aux-top"><span class="aux-label" id="auxLabel"></span><span class="aux-time" id="auxTime"></span></div>
+        <div class="row r3">
+          <button class="btn small" data-act="auxadj" data-ms="-60000">−1 min</button>
+          <button class="btn small" data-act="auxadj" data-ms="60000">+1 min</button>
+          <button class="btn small" data-act="auxend">Lopeta</button>
+        </div>
+      </div>
+      <button class="btn" id="preBtn" data-act="pre" hidden>Käynnistä ottelua edeltävä kello</button>
       <button class="startbtn" id="startBtn" data-act="clock">Käynnistä kello</button>
       <button class="bigbtn arrowbtn" data-act="arrow" id="arrowBtn"><span class="bb-main">Käännä nuoli</span><span class="bb-sub" id="arrowSub">Ei asetettu</span></button>
       <button class="bigbtn nextbtn" data-act="next" id="nextBtn">Seuraava jakso</button>
@@ -439,6 +458,15 @@ details.help .hint{margin-top:6px}
       <label class="field check full"><input type="checkbox" id="s-stats"> Tilastot ja pöytäkirja</label>
     </div>
     <details class="help"><summary aria-label="Ohje">?</summary><p class="hint">Jokaisessa jatkoajassa on 1 aikalisä. Joukkuevirheet nollautuvat jokaisen jakson alussa ja jatkuvat jatkoajalle. Uusi jakson pituus tulee voimaan seuraavasta jaksosta, tai heti, jos peli ei ole vielä alkanut. Tapahtumat tallentuvat aina; tilastojen asetus näyttää Tilastot-painikkeen.</p></details>
+    <h3>Tauot ja aikalisät</h3>
+    <div class="fields">
+      <label class="field">Ottelua edeltävä aika (min)<input type="number" id="s-pre" min="1" max="90" step="1"></label>
+      <label class="field">Aikalisän pituus (s)<input type="number" id="s-tosec" min="10" max="300" step="5"></label>
+      <label class="field">Tauko jaksojen välissä (min)<input type="number" id="s-brk" min="0" max="30" step="0.5"></label>
+      <label class="field">Puoliaikatauko (min)<input type="number" id="s-half" min="0" max="30" step="0.5"></label>
+      <label class="field check full"><input type="checkbox" id="s-autobrk"> Käynnistä taukokello jakson vaihtuessa</label>
+    </div>
+    <details class="help"><summary aria-label="Ohje">?</summary><p class="hint">Ottelua edeltävä kello soi 3 minuuttia ennen alkua ja alussa. Taukokello ja aikalisäkello soivat, kun aikaa on 0 jäljellä. Jos haluat kaikki tauot yhtä pitkiksi, anna puoliaikatauolle sama arvo kuin muille tauoille. Jatkoaikaa edeltää tavallinen tauko. Pelikellon käynnistäminen lopettaa käynnissä olevan tauon tai aikalisän.</p></details>
     <h3>Pohjat</h3>
     <details class="help" style="margin:0 0 10px"><summary aria-label="Ohje">?</summary><p class="hint">Tallenna lomakkeen asetukset pohjaksi tai siirrä ne toiselle laitteelle koodina. Pohja tai koodi täyttää lomakkeen; ota se käyttöön painamalla Tallenna. Logot tallentuvat pohjiin, mutta eivät siirry koodissa.</p></details>
     <div class="fields">
@@ -512,6 +540,8 @@ details.help .hint{margin-top:6px}
     <p>Kumoa perui viimeisimmän merkinnän. Joukkueen alalaidan painikkeilla voi poistaa pisteen, aikalisän tai virheen myöhemminkin. Kellon, heittokellon ja jakson voi korjata kohdasta Kellon ja jakson korjaus.</p>
     <h3>Pisteentekijät ja tilastot</h3>
     <p>Kun pisteentekijät on otettu asetuksista käyttöön, pisteiden jälkeen näytetään pelinumerot. Valitse tekijä tai ohita. Tilastot ja pöytäkirja löytyvät Tilastot-painikkeesta, kun ne on otettu käyttöön.</p>
+    <h3>Taukokellot ja aikalisät</h3>
+    <p>Ennen ottelua voit käynnistää ottelua edeltävän kellon, joka soi 3 minuuttia ennen alkua ja alussa. Jakson vaihtuessa käynnistyy taukokello, ja aikalisä käynnistää aikalisäkellon. Ne näkyvät taululla pelikellon paikalla, ja pelikello näkyy pienenä alla. Summeri soi, kun aika loppuu. Pelikellon käynnistys lopettaa tauon tai aikalisän. Pituudet säädetään asetuksista.</p>
     <h3>Loki</h3>
     <p>Loki tallentaa kaikki tapahtumat kellonaikoineen tähän selaimeen. Jos laite sammuu, sivu jatkaa viimeisimmästä tilanteesta, ja lokista näkee, mitä tapahtui juuri ennen katkosta.</p>
   </div>
@@ -562,13 +592,13 @@ const DEF_ROSTER='4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15';
 function defCfg(){return{
   home:{name:'Koti',color:'#2B6DE8',roster:DEF_ROSTER,logo:''},
   away:{name:'Vieras',color:'#E2462F',roster:DEF_ROSTER,logo:''},
-  periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true,playerFouls:true,trackScorers:false,stats:false
+  periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true,playerFouls:true,trackScorers:false,stats:false,preMin:20,toSec:60,breakMin:2,halfMin:15,autoBreak:true
 };}
 function periodLen(p,c){c=c||CFG;return Math.round((p<=c.periods?c.periodMin:c.otMin)*60000);}
 function defState(c){return{
   period:1,clock:{running:false,base:periodLen(1,c),startedAt:0},shot:{base:24000,startedAt:0},
   score:{home:0,away:0},teamFouls:{home:0,away:0},players:{home:{},away:{}},
-  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null},over:false
+  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null},over:false,aux:null,started:false
 };}
 
 const SCREEN=location.hash==='#display';
@@ -617,6 +647,8 @@ function toggleClock(){
   if(S.clock.running){stopClock();logE('Kello pysäytetty');commit();return;}
   if(S.over){toast('Peli on päätetty. Kumoa tai aloita uusi peli asetuksista.');return;}
   if(gameLeft()<=0){toast('Jakso on päättynyt. Paina Seuraava jakso.');return;}
+  if(S.aux){logE(auxLabel()+' päättyi, peli käynnistyi',true);S.aux=null;}
+  S.started=true;
   const t=now();S.clock.running=true;S.clock.startedAt=t;S.shot.startedAt=t;logE('Kello käyntiin');commit();
 }
 const MAXT=99*60000;
@@ -665,6 +697,20 @@ function undo(){
 function evPush(k,tm,x){const e=Object.assign({k,tm,per:S.period,g:gameLeft(),h:S.score.home,a:S.score.away,t:now()},x||{});S.ev.push(e);return S.ev.length-1;}
 function evRemoveLast(test){for(let i=S.ev.length-1;i>=0;i--){if(test(S.ev[i])){S.ev.splice(i,1);TEAMS.forEach(t=>{const p=S.pend[t];if(p!==null){if(p===i)S.pend[t]=null;else if(p>i)S.pend[t]=p-1;}});return true;}}return false;}
 
+/* ---------- Downtime clocks (pre-game, breaks, timeouts) ---------- */
+function auxLeft(){const a=S.aux;return a?Math.max(0,a.base-(now()-a.startedAt)):0;}
+function fmtAux(ms){const s=Math.ceil(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function auxLabel(){const a=S.aux;if(!a)return '';return a.k==='pre'?'Ottelun alkuun':(a.k==='half'?'Puoliaikatauko':(a.k==='brk'?'Tauko':'Aikalisä – '+nm(a.tm)));}
+function startAux(k,ms,tm){S.aux={k,tm:tm||null,base:Math.max(0,Math.round(ms)),startedAt:now(),w3:ms<=180000};}
+function startPre(){startAux('pre',CFG.preMin*60000);logE('Ottelua edeltävä kello käynnistetty ('+fmtAux(S.aux.base)+')',true);commit();}
+function auxAdjust(ms){const a=S.aux;if(!a)return;a.base=Math.max(0,auxLeft()+ms);a.startedAt=now();if(a.k==='pre')a.w3=a.base<=180000;commit();}
+function endAux(byTime){
+  const a=S.aux;if(!a)return;const lb=auxLabel();S.aux=null;
+  if(byTime)buzz();
+  const msg=a.k==='pre'?'Ottelu alkaa':(a.k==='to'?'Aikalisä päättyi':lb+' päättyi');
+  toast(msg+(a.k!=='to'?': '+periodName():''));logE(msg+(byTime?'':' (lopetettu käsin)'),true);commit();
+}
+
 /* ---------- Actions ---------- */
 const nm=t=>CFG[t].name;
 function addPts(t,n){
@@ -689,8 +735,10 @@ function timeout(t){
   if(toLeft(t)<=0){toast(nm(t)+': ei aikalisiä jäljellä');return;}
   pushHist('Aikalisä '+nm(t));
   stopClock();const l2=inLast2();S.to[t].used++;if(l2)S.to[t].last2++;
-  evPush('to',t);
-  toast('Aikalisä '+nm(t));logE('Aikalisä '+nm(t));commit();
+  const plen=periodLen(S.period),min=Math.max(1,Math.min(Math.ceil(plen/60000),Math.floor((plen-gameLeft())/60000)+1));
+  evPush('to',t,{min});
+  startAux('to',CFG.toSec*1000,t);
+  toast('Aikalisä '+nm(t));logE('Aikalisä '+nm(t)+' (jakson '+min+'. minuutti)');commit();
 }
 function nextPeriod(flip){
   pushHist('Seuraava jakso',true);
@@ -699,6 +747,10 @@ function nextPeriod(flip){
   if(segOf(S.period)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(S.period);S.shot.base=24000;
   if(flip===true&&S.arrow){S.arrow=S.arrow==='home'?'away':'home';logE('Puoliaika: hallintanuoli käännetty, '+nm(S.arrow));}
+  if(CFG.autoBreak){
+    const half=S.period===CFG.periods/2+1,mins=half?CFG.halfMin:CFG.breakMin;
+    if(mins>0){startAux(half?'half':'brk',mins*60000);logE((half?'Puoliaikatauko':'Tauko')+' alkoi ('+fmtAux(S.aux.base)+')',true);}
+  }
   evPush('per',null);
   toast(periodName());logE(periodName()+' alkoi',true);commit();
 }
@@ -761,17 +813,20 @@ function renderBoard(doc){
       return '<div class="prow '+foulClass(f)+'" aria-label="Numero '+p+', virheitä '+f+'"><span class="pn">#'+p+'</span><span class="balls">'+bl+'</span></div>';
     }).join('');
   });
-  g('b-period').textContent=S.over?'Lopputulos':periodName();
+  g('b-period').textContent=S.aux?auxLabel():(S.over?'Lopputulos':periodName());
+  if(bd)bd.classList.toggle('auxon',!!S.aux);
   const ar=g('b-arrow');ar.classList.toggle('set',!!S.arrow);ar.classList.toggle('left',S.arrow==='home');
   doc.__c={};drawBoard(doc);
 }
 function drawBoard(doc){
   const c=doc.__c||(doc.__c={}),cl=doc.getElementById('b-clock'),sh=doc.getElementById('b-shot');
   if(!cl)return;
-  const gm=gameLeft(),gs=fmtGame(gm);
-  if(gs!==c.g){cl.innerHTML=seg(gs);cl.classList.toggle('zero',gm<=0);c.g=gs;}
-  const shown=shotShown(),ss=shown?fmtShot(shotLeft()):(CFG.shotClock?'--':'');
-  if(ss!==c.s){sh.innerHTML=seg(ss);sh.classList.toggle('off',!shown);c.s=ss;}
+  const ax=S.aux,gm=gameLeft(),gs=ax?fmtAux(auxLeft()):fmtGame(gm);
+  if(gs!==c.g){cl.innerHTML=seg(gs);cl.classList.toggle('zero',!ax&&gm<=0);c.g=gs;}
+  let shown,ss;
+  if(ax){shown=true;ss=fmtGame(gm);}else{shown=shotShown();ss=shown?fmtShot(shotLeft()):(CFG.shotClock?'--':'');}
+  const key=(ax?'g':'s')+ss;
+  if(key!==c.s){sh.innerHTML=seg(ss);sh.classList.toggle('off',!shown);sh.classList.toggle('gsmall',!!ax);c.s=key;}
   const sb=doc.getElementById('b-stop');
   if(sb&&c.r!==S.clock.running){sb.classList.toggle('on',!S.clock.running);c.r=S.clock.running;}
   const eg=S.period>=CFG.periods&&gm>0&&gm<=120000;
@@ -839,6 +894,8 @@ function renderAll(){
   const u=H[H.length-1];$('undoBtn').textContent=u?'Kumoa: '+u.label:'Kumoa';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
   $('statsBtn').hidden=!CFG.stats;
+  $('auxBox').hidden=!S.aux;if(S.aux){$('auxLabel').textContent=auxLabel();$('auxTime').textContent=fmtAux(auxLeft());}
+  $('preBtn').hidden=!!(S.aux||S.started||S.over||S.period!==1||S.clock.running||S.clock.base!==periodLen(1));
   const ps=$('periodSel'),maxP=Math.max(S.period,CFG.periods)+1;let o='';
   for(let p=1;p<=maxP;p++)o+='<option value="'+p+'"'+(p===S.period?' selected':'')+'>'+periodName(p)+'</option>';
   if(document.activeElement!==ps)ps.innerHTML=o;
@@ -846,6 +903,12 @@ function renderAll(){
 }
 
 function frame(){
+  if(!SCREEN&&S.aux){
+    const l=auxLeft();
+    if(S.aux.k==='pre'&&!S.aux.w3&&l<=180000&&l>0){S.aux.w3=true;buzz();toast('3 minuuttia ottelun alkuun');logE('3 minuuttia ottelun alkuun',true);save();}
+    if(l<=0)endAux(true);
+  }
+  if(!SCREEN&&S.aux)$('auxTime').textContent=fmtAux(auxLeft());
   if(!SCREEN&&S.clock.running){
     if(gameLeft()<=0){
       const s=shotLeft();S.clock.running=false;S.clock.base=0;S.shot.base=s;buzz();
@@ -893,6 +956,9 @@ $('controls').addEventListener('click',e=>{
   const d=b.dataset;
   switch(d.act){
     case 'clock':toggleClock();break;
+    case 'pre':startPre();break;
+    case 'auxadj':auxAdjust(+d.ms);break;
+    case 'auxend':endAux(false);break;
     case 'adj':adjustClock(+d.ms);break;
     case 'shot':resetShot(+d.s);break;
     case 'next':askNext();break;
@@ -1003,7 +1069,7 @@ function askEnd(warn){
 }
 function endGame(){
   pushHist('Peli päätetty',true);
-  stopClock();S.over=true;evPush('final',null);
+  stopClock();S.over=true;S.aux=null;evPush('final',null);
   logE('Peli päätetty: '+nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away'),true);
   toast('Peli päätetty');commit();
   setTimeout(openEnd,400);
@@ -1147,6 +1213,7 @@ function fillForm(c){
   $('s-tomode').value=c.toMode;$('s-topg').value=c.toPerGame;
   $('s-bonus').value=c.bonus;$('s-foulout').value=c.foulOut;
   $('s-shot').checked=c.shotClock;$('s-sound').checked=c.sound;$('s-pf').checked=c.playerFouls!==false;$('s-scorers').checked=!!c.trackScorers;$('s-stats').checked=!!c.stats;
+  $('s-pre').value=c.preMin;$('s-tosec').value=c.toSec;$('s-brk').value=c.breakMin;$('s-half').value=c.halfMin;$('s-autobrk').checked=c.autoBreak!==false;
   syncSettingVisibility();
 }
 function num(id,def,min,max){const v=parseFloat($(id).value);return isFinite(v)?Math.min(max,Math.max(min,v)):def;}
@@ -1158,15 +1225,16 @@ function readForm(){
   c.toMode=$('s-tomode').value==='game'?'game':'fiba';c.toPerGame=Math.round(num('s-topg',CFG.toPerGame,0,10));
   c.bonus=Math.round(num('s-bonus',CFG.bonus,1,15));c.foulOut=Math.round(num('s-foulout',CFG.foulOut,1,10));
   c.shotClock=$('s-shot').checked;c.sound=$('s-sound').checked;c.playerFouls=$('s-pf').checked;c.trackScorers=$('s-scorers').checked;c.stats=$('s-stats').checked;
+  c.preMin=num('s-pre',CFG.preMin,1,90);c.toSec=Math.round(num('s-tosec',CFG.toSec,10,300));c.breakMin=num('s-brk',CFG.breakMin,0,30);c.halfMin=num('s-half',CFG.halfMin,0,30);c.autoBreak=$('s-autobrk').checked;
   return c;
 }
 function cleanCfg(o){
   if(!o||typeof o!=='object')return null;
   const dc=defCfg(),c=Object.assign(dc,o);
   TEAMS.forEach(t=>{c[t]=Object.assign(defCfg()[t],o[t]||{});c[t].name=String(c[t].name).slice(0,24);c[t].roster=String(c[t].roster);if(!/^#[0-9a-f]{6}$/i.test(c[t].color))c[t].color=defCfg()[t].color;if(!(typeof c[t].logo==='string'&&c[t].logo.startsWith('data:image/')))c[t].logo='';});
-  ['periodMin','otMin','toPerGame','bonus','foulOut','periods'].forEach(k=>{c[k]=+c[k];if(!isFinite(c[k]))c[k]=dc[k];});
+  ['periodMin','otMin','toPerGame','bonus','foulOut','periods','preMin','toSec','breakMin','halfMin'].forEach(k=>{c[k]=+c[k];if(!isFinite(c[k]))c[k]=dc[k];});
   c.periods=c.periods===2?2:4;c.toMode=c.toMode==='game'?'game':'fiba';
-  c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;c.trackScorers=!!c.trackScorers;c.stats=!!c.stats;
+  c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;c.trackScorers=!!c.trackScorers;c.stats=!!c.stats;c.autoBreak=c.autoBreak!==false;
   return c;
 }
 $('settingsBtn').addEventListener('click',()=>{fillForm(CFG);disarmNew();renderTplSel();$('tplCode').value='';dlg.showModal();});
@@ -1258,7 +1326,7 @@ const perShort=p=>p>CFG.periods?'JA'+(p-CFG.periods):String(p);
 function evText(e){
   if(e.k==='pts')return e.n>0?'+'+e.n:'Korjaus −'+Math.abs(e.n);
   if(e.k==='foul')return e.p?'Virhe (pelaajan '+e.c+'.)':'Joukkuevirhe';
-  if(e.k==='to')return 'Aikalisä';
+  if(e.k==='to')return e.min?'Aikalisä ('+e.min+'. min)':'Aikalisä';
   if(e.k==='per')return periodName(e.per)+' alkoi';
   if(e.k==='end')return periodName(e.per)+' päättyi';
   if(e.k==='final')return 'Peli päätetty';
