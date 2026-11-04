@@ -45,13 +45,13 @@ button{cursor:pointer;touch-action:manipulation}
 .board-wrap{container-type:inline-size;position:relative}
 .board{
   background:var(--board);border-radius:14px;padding:2.4cqi 2.6cqi 2cqi;
-  display:grid;grid-template-columns:.6fr 1fr 1.2fr 1fr .6fr;align-items:start;gap:1.6cqi;
+  display:grid;grid-template-columns:.7fr 1fr 1.6fr 1fr .7fr;align-items:start;gap:1.6cqi;
   font-family:"Barlow Condensed","Arial Narrow",sans-serif;color:var(--led-white);
 }
 .team-b{display:flex;flex-direction:column;align-items:center;min-width:0}
 .tname{font-weight:600;font-size:max(13px,3.4cqi);line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-bottom:.6cqi;border-bottom:.7cqi solid var(--c)}
 .home-b{--c:var(--home)} .away-b{--c:var(--away)}
-.score{font-weight:700;font-size:14cqi;line-height:1;margin-top:1cqi;color:var(--led-white)}
+.score{font-weight:700;font-size:10.5cqi;white-space:nowrap;line-height:1;margin-top:1cqi;color:var(--led-white)}
 .meta{display:flex;gap:2.4cqi;align-items:flex-start;margin-top:1cqi;font-size:max(11px,2.3cqi);color:#B9B6AC}
 .meta > div{display:flex;flex-direction:column;align-items:center;gap:.4cqi}
 .fnum{font-weight:700;font-size:max(18px,5.4cqi);line-height:1;color:var(--led)}
@@ -63,10 +63,10 @@ button{cursor:pointer;touch-action:manipulation}
 
 .mid{display:flex;flex-direction:column;align-items:center}
 .period{font-weight:600;font-size:max(13px,3.6cqi);color:#B9B6AC;line-height:1.1;padding-bottom:1.3cqi}
-.gclock{font-weight:700;font-size:12.5cqi;line-height:1;color:var(--led);text-shadow:0 0 2cqi rgba(255,178,26,.35)}
+.gclock{font-weight:700;font-size:10.5cqi;white-space:nowrap;line-height:1;color:var(--led);text-shadow:0 0 2cqi rgba(255,178,26,.35)}
 .gclock.zero{color:var(--led-red);text-shadow:0 0 2cqi rgba(255,74,61,.35)}
 .shotrow{display:flex;align-items:center;gap:3cqi;margin-top:1.4cqi}
-.sclock{font-weight:700;font-size:7.5cqi;line-height:1;min-width:2.4ch;text-align:center;color:var(--led-red);text-shadow:0 0 1.6cqi rgba(255,74,61,.35)}
+.sclock{font-weight:700;font-size:7.5cqi;white-space:nowrap;line-height:1;min-width:2.4ch;text-align:center;color:var(--led-red);text-shadow:0 0 1.6cqi rgba(255,74,61,.35)}
 .sclock.off{color:var(--led-off);text-shadow:none}
 .arrow{font-size:4.4cqi;line-height:1;color:var(--led-off);transition:color .15s}
 .arrow.on{color:var(--led)}
@@ -75,12 +75,16 @@ button{cursor:pointer;touch-action:manipulation}
 
 .plist{display:flex;flex-direction:column;gap:.3cqi;font-size:max(11px,2.6cqi);line-height:1.15;min-width:0}
 .plist-h{color:#B9B6AC;font-size:max(10px,1.9cqi);padding-bottom:.5cqi;border-bottom:.4cqi solid var(--c);margin-bottom:.4cqi;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prow{display:flex;justify-content:space-between;align-items:baseline;gap:.8cqi}
-.prow .pn{color:var(--led-white);font-weight:600}
-.prow .pc{font-weight:700;color:var(--led);text-align:right}
-.prow.zero .pc{color:#4a4a4a}
-.prow.warn .pc{color:#FFD24A}
-.prow.out .pn,.prow.out .pc{color:var(--led-red)}
+.prow{display:flex;align-items:center;gap:.8cqi;min-height:1.15em}
+.prow .pn{color:var(--led-white);font-weight:600;min-width:2.4ch}
+.prow.out .pn{color:var(--led-red)}
+.balls{display:flex;gap:.3cqi;align-items:center}
+.ball{width:max(7px,1.3cqi);height:max(7px,1.3cqi);border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#FFB45C,#F07A12 60%,#C25A00)}
+.ball.red{background:radial-gradient(circle at 35% 30%,#FF8A80,#FF3B2F 60%,#B81E14)}
+.ball.to-ball{width:max(10px,1.9cqi);height:max(10px,1.9cqi)}
+.clockwrap{position:relative}
+.stopball{position:absolute;left:100%;top:50%;margin-left:.45cqi;transform:translateY(-50%);width:max(8px,1.8cqi);height:max(8px,1.8cqi);border-radius:50%;background:radial-gradient(circle at 35% 30%,#FF8A80,#FF3B2F 60%,#B81E14);box-shadow:0 0 1.2cqi rgba(255,59,47,.6);visibility:hidden}
+.stopball.on{visibility:visible}
 .home-p{--c:var(--home)} .away-p{--c:var(--away)}
 .exit-display{display:none}
 
@@ -107,7 +111,9 @@ button{cursor:pointer;touch-action:manipulation}
 
 .tp-head{display:flex;align-items:center;gap:10px;margin:0 0 10px;font:600 1.3rem/1.1 "Barlow Condensed",Barlow,sans-serif}
 .swatch{width:14px;height:28px;border-radius:4px;background:var(--c);flex:none}
-.tp-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tp-name{flex:1;min-width:0;font:inherit;color:inherit;background:transparent;border:1px solid transparent;border-radius:6px;padding:3px 6px;margin-left:-6px;text-overflow:ellipsis}
+.tp-name:hover{border-color:var(--line)}
+.tp-name:focus{border-color:var(--focus);background:var(--bg);outline:none}
 .tp-score{font-variant-numeric:tabular-nums;font-size:1.6rem}
 .team-panel[data-team="home"]{--c:var(--home)} .team-panel[data-team="away"]{--c:var(--away)}
 .pts .btn{font:700 1.35rem/1 "Barlow Condensed",Barlow,sans-serif;min-height:58px}
@@ -120,10 +126,11 @@ button{cursor:pointer;touch-action:manipulation}
 .chip:hover{background:var(--btn-hover)}
 .chip .num{font:700 1.15rem/1 "Barlow Condensed",Barlow,sans-serif}
 .chip .pf{display:flex;gap:2px}
-.chip .pf i{width:6px;height:6px;border-radius:50%;background:var(--line)}
-.chip .pf i.f{background:var(--ink)}
+.chip .pf i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.chip .pf i.f{background:#F07A12}
+.chip .pf i.r{background:#FF3B2F}
 .chip.warn{border-color:#D99A00}
-.chip.warn .pf i.f{background:#D99A00}
+.chip.warn .pf i.f{background:#F07A12}
 .chip.out{background:var(--stop);border-color:var(--stop);color:#fff}
 .chip.out .pf i.f{background:#fff}
 .empty-roster{font-size:.85rem;color:var(--muted);grid-column:1/-1}
@@ -211,7 +218,7 @@ body.screen{cursor:default}
       </div>
       <div class="mid">
         <div class="period" id="b-period"></div>
-        <div class="gclock" id="b-clock"></div>
+        <div class="clockwrap"><div class="gclock" id="b-clock"></div><span class="stopball" id="b-stop" aria-hidden="true"></span></div>
         <div class="shotrow">
           <span class="arrow" id="b-arrow-home" aria-hidden="true">◀</span>
           <span class="sclock" id="b-shot"></span>
@@ -471,13 +478,13 @@ function renderBoard(doc){
     g('b-'+t+'-score').innerHTML=seg(S.score[t]);
     g('b-'+t+'-fouls').innerHTML=seg(S.teamFouls[t]);
     g('b-'+t+'-bonus').classList.toggle('on',S.teamFouls[t]>=CFG.bonus-1);
-    const left=toLeft(t),total=allowance(segOf(S.period));
-    let h='';for(let i=0;i<Math.max(total,left);i++)h+='<span class="dot'+(i<left?'':' used')+'"></span>';
+    let h='';for(let i=0;i<S.to[t].used;i++)h+='<span class="ball to-ball"></span>';
     g('b-'+t+'-to').innerHTML=h;
     const nums=roster(t);
     g('b-'+t+'-players').innerHTML='<div class="plist-h">Player fouls</div>'+nums.map(p=>{
       const f=S.players[t][p]||0;
-      return '<div class="prow '+foulClass(f)+'"><span class="pn">'+p+'</span><span class="pc">'+f+'</span></div>';
+      let bl='';for(let i=1;i<=f;i++)bl+='<span class="ball'+(i>=CFG.foulOut?' red':'')+'"></span>';
+      return '<div class="prow '+foulClass(f)+'" aria-label="Number '+p+', '+f+' fouls"><span class="pn">#'+p+'</span><span class="balls">'+bl+'</span></div>';
     }).join('');
   });
   g('b-period').textContent=isFinal()?'Final':periodName();
@@ -492,13 +499,15 @@ function drawBoard(doc){
   if(gs!==c.g){cl.innerHTML=seg(gs);cl.classList.toggle('zero',gm<=0);c.g=gs;}
   const shown=shotShown(),ss=shown?fmtShot(shotLeft()):(CFG.shotClock?'--':'');
   if(ss!==c.s){sh.innerHTML=seg(ss);sh.classList.toggle('off',!shown);c.s=ss;}
+  const sb=doc.getElementById('b-stop');
+  if(sb&&c.r!==S.clock.running){sb.classList.toggle('on',!S.clock.running);c.r=S.clock.running;}
 }
 
 function buildTeamPanels(){
   document.querySelectorAll('.team-panel').forEach(el=>{
     const t=el.dataset.team;
     el.innerHTML=
-      '<h2 class="tp-head"><span class="swatch"></span><span class="tp-name"></span><span class="tp-score"></span></h2>'+
+      '<h2 class="tp-head"><span class="swatch"></span><input class="tp-name" data-team="'+t+'" maxlength="24" aria-label="Team name" title="Tap to rename"><span class="tp-score"></span></h2>'+
       '<div class="row r4 pts">'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="1">+1</button>'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="2">+2</button>'+
@@ -521,7 +530,7 @@ function renderAll(){
   if(SCREEN)return;
   TEAMS.forEach(t=>{
     const panel=document.querySelector('.team-panel[data-team="'+t+'"]');
-    panel.querySelector('.tp-name').textContent=CFG[t].name;
+    const ni=panel.querySelector('.tp-name');if(document.activeElement!==ni)ni.value=CFG[t].name;
     panel.querySelector('.tp-score').textContent=S.score[t];
     panel.querySelector('.fouls-left').textContent='Team fouls: '+S.teamFouls[t];
     panel.querySelector('[data-act="to"] .to-left').textContent=toLeft(t)+' left';
@@ -529,8 +538,8 @@ function renderAll(){
     pl.innerHTML=nums.length?nums.map(p=>{
       const f=S.players[t][p]||0,fc=foulClass(f);
       const cls=fc==='out'||fc==='warn'?' '+fc:'';
-      let dots='';for(let i=0;i<CFG.foulOut;i++)dots+='<i'+(i<f?' class="f"':'')+'></i>';
-      return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Foul on number '+p+', '+f+' fouls"><span class="num">'+p+'</span><span class="pf">'+dots+'</span></button>';
+      let dots='';for(let i=0;i<CFG.foulOut;i++)dots+='<i'+(i<f?(i>=CFG.foulOut-1?' class="f r"':' class="f"'):'')+'></i>';
+      return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Foul on number '+p+', '+f+' fouls"><span class="num">#'+p+'</span><span class="pf">'+dots+'</span></button>';
     }).join(''):'<span class="empty-roster">Add player numbers in Settings.</span>';
   });
   $('arrowBtn').textContent=S.arrow?'Arrow: '+nm(S.arrow):'Set arrow';
@@ -596,6 +605,13 @@ $('controls').addEventListener('click',e=>{
     case 'roster':openRoster(d.team);break;
   }
 });
+
+$('controls').addEventListener('input',e=>{
+  const i=e.target.closest('.tp-name');if(!i)return;
+  const t=i.dataset.team;CFG[t].name=i.value.trim()||(t==='home'?'Home':'Away');commit();
+});
+$('controls').addEventListener('focusout',e=>{const i=e.target.closest('.tp-name');if(i)i.value=CFG[i.dataset.team].name;});
+$('controls').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('tp-name'))e.target.blur();});
 
 /* Display mode */
 let wentFs=false;
