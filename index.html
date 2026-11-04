@@ -68,8 +68,10 @@ button{cursor:pointer;touch-action:manipulation}
 .shotrow{display:flex;align-items:center;gap:3cqi;margin-top:1.4cqi}
 .sclock{font-weight:700;font-size:7.5cqi;white-space:nowrap;line-height:1;min-width:2.4ch;text-align:center;color:var(--led-red);text-shadow:0 0 1.6cqi rgba(255,74,61,.35)}
 .sclock.off{color:var(--led-off);text-shadow:none}
-.arrow{font-size:4.4cqi;line-height:1;color:var(--led-off);transition:color .15s}
-.arrow.on{color:var(--led)}
+.parrow{width:16cqi;margin-top:1.8cqi;color:var(--led-red);opacity:.12;transition:transform .6s ease-in-out,opacity .2s;filter:drop-shadow(0 0 1.2cqi rgba(255,59,47,.55))}
+.parrow svg{display:block;width:100%;height:auto;fill:currentColor}
+.parrow.set{opacity:1}
+.parrow.left{transform:rotate(180deg)}
 .dg{display:inline-block;width:.54em;text-align:center}
 .sp{display:inline-block;width:.24em;text-align:center}
 
@@ -134,6 +136,10 @@ button{cursor:pointer;touch-action:manipulation}
 .chip.out{background:var(--stop);border-color:var(--stop);color:#fff}
 .chip.out .pf i.f{background:#fff}
 .empty-roster{font-size:.85rem;color:var(--muted);grid-column:1/-1}
+.plabel{flex-wrap:wrap}
+.plabel-b{display:flex;gap:6px;flex:none}
+.team-panel.removing .chip,.team-panel.removing [data-act="foul"]{border:2px dashed var(--stop)}
+.team-panel.removing .rm-btn{background:var(--stop);border-color:var(--stop);color:#fff}
 .numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
 .num-t{min-height:38px;border:1px solid var(--line);background:var(--btn);border-radius:6px;font:600 1rem/1 "Barlow Condensed",Barlow,sans-serif;padding:0}
 .num-t:hover{background:var(--btn-hover)}
@@ -219,11 +225,8 @@ body.screen{cursor:default}
       <div class="mid">
         <div class="period" id="b-period"></div>
         <div class="clockwrap"><div class="gclock" id="b-clock"></div><span class="stopball" id="b-stop" aria-hidden="true"></span></div>
-        <div class="shotrow">
-          <span class="arrow" id="b-arrow-home" aria-hidden="true">◀</span>
-          <span class="sclock" id="b-shot"></span>
-          <span class="arrow" id="b-arrow-away" aria-hidden="true">▶</span>
-        </div>
+        <div class="shotrow"><span class="sclock" id="b-shot"></span></div>
+        <div class="parrow" id="b-arrow" aria-hidden="true"><svg viewBox="0 0 100 50"><polygon points="0,16 58,16 58,0 100,25 58,50 58,34 0,34"/></svg></div>
       </div>
       <div class="team-b away-b">
         <div class="tname" id="b-away-name"></div>
@@ -488,8 +491,7 @@ function renderBoard(doc){
     }).join('');
   });
   g('b-period').textContent=isFinal()?'Final':periodName();
-  g('b-arrow-home').classList.toggle('on',S.arrow==='home');
-  g('b-arrow-away').classList.toggle('on',S.arrow==='away');
+  const ar=g('b-arrow');ar.classList.toggle('set',!!S.arrow);ar.classList.toggle('left',S.arrow==='home');
   doc.__c={};drawBoard(doc);
 }
 function drawBoard(doc){
@@ -518,7 +520,7 @@ function buildTeamPanels(){
         '<button class="btn" data-act="to" data-team="'+t+'">Timeout<span class="to-left"></span></button>'+
         '<button class="btn" data-act="foul" data-team="'+t+'">Foul, no player<span class="to-left fouls-left"></span></button>'+
       '</div>'+
-      '<div class="plabel"><span>Player fouls (tap a number to add a foul)</span><button class="btn small" data-act="roster" data-team="'+t+'">Edit players</button></div>'+
+      '<div class="plabel"><span class="plabel-t">Player fouls: tap a number to add</span><span class="plabel-b"><button class="btn small rm-btn" data-act="rmfoul" data-team="'+t+'">Remove foul</button><button class="btn small" data-act="roster" data-team="'+t+'">Edit players</button></span></div>'+
       '<div class="players"></div>';
   });
 }
@@ -601,7 +603,8 @@ $('controls').addEventListener('click',e=>{
     case 'undo':undo();break;
     case 'pts':addPts(d.team,+d.n);break;
     case 'to':timeout(d.team);break;
-    case 'foul':foul(d.team,d.p||null);break;
+    case 'foul':if(rmMode[d.team])unfoul(d.team,d.p||null);else foul(d.team,d.p||null);break;
+    case 'rmfoul':setRm(d.team,!rmMode[d.team]);break;
     case 'roster':openRoster(d.team);break;
   }
 });
@@ -648,6 +651,25 @@ document.addEventListener('keydown',e=>{
   else if(k==='f')document.body.classList.contains('display')?exitDisplay():enterDisplay();
   else if(k==='escape'&&document.body.classList.contains('display'))exitDisplay();
 });
+
+/* Remove foul */
+const rmMode={home:false,away:false},rmTimer={};
+function setRm(t,on){
+  rmMode[t]=on;clearTimeout(rmTimer[t]);
+  const panel=document.querySelector('.team-panel[data-team="'+t+'"]');
+  panel.classList.toggle('removing',on);
+  panel.querySelector('.rm-btn').textContent=on?'Cancel':'Remove foul';
+  panel.querySelector('.plabel-t').textContent=on?'Tap a number to remove one foul':'Player fouls: tap a number to add';
+  if(on)rmTimer[t]=setTimeout(()=>setRm(t,false),8000);
+}
+function unfoul(t,p){
+  if(p&&!(S.players[t][p]>0)){toast('#'+p+' has no fouls');return;}
+  if(!p&&S.teamFouls[t]<=0){toast(nm(t)+' has no team fouls');return;}
+  pushHist('Remove foul '+(p?'#'+p+' ':'')+nm(t));
+  if(p)S.players[t][p]--;
+  S.teamFouls[t]=Math.max(0,S.teamFouls[t]-1);
+  setRm(t,false);toast('Foul removed'+(p?' from #'+p:'')+', '+nm(t));commit();
+}
 
 /* Roster editor */
 const ALLNUMS=['00','0'].concat(Array.from({length:99},(_,i)=>String(i+1)));
