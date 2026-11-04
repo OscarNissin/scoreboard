@@ -326,9 +326,33 @@ details.help .hint{margin-top:6px}
 .aux-set .tin{min-height:34px;font-size:.95rem;padding:5px 8px}
 .auxbox.paused .aux-time{color:var(--muted)}
 @keyframes blinkBtn{0%,100%{filter:none;box-shadow:none}50%{filter:brightness(1.3);box-shadow:0 0 0 5px rgba(210,96,14,.45)}}
-.arrowbtn.needs{animation:blinkBtn 1s ease-in-out infinite}
+.arrowgroup.needs .bigbtn{animation:blinkBtn 1s ease-in-out infinite}
 @keyframes blinkArrow{0%,100%{opacity:.12}50%{opacity:.8}}
 .board.needarrow .parrow{animation:blinkArrow 1s ease-in-out infinite}
+/* ---------- v6 ---------- */
+.arrowgroup{display:grid;grid-template-columns:1fr 2.6fr 1fr;gap:3px}
+.arrowgroup .bigbtn{border-radius:4px}
+.arrowgroup .bigbtn:first-child{border-radius:11px 4px 4px 11px}
+.arrowgroup .bigbtn:last-child{border-radius:4px 11px 11px 4px}
+.arrow-end svg{width:70%;max-width:54px;height:auto;fill:#fff;display:block}
+.arrow-end{opacity:.5}
+.arrow-end.on{opacity:1;box-shadow:inset 0 0 0 3px rgba(255,255,255,.8)}
+#libDlg{width:min(720px,94vw)}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0;max-height:55vh;overflow:auto}
+.lib-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--btn);cursor:pointer;font-size:.8rem;color:var(--ink)}
+.lib-item:hover{border-color:var(--focus)}
+.lib-item img{width:72px;height:72px;object-fit:contain}
+.lib-item span{text-align:center;overflow-wrap:anywhere}
+.logo-sugg{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.logo-sugg[hidden]{display:none}
+.logo-sugg img{height:28px;max-width:44px;object-fit:contain}
+/* ---------- v7: tidy settings grid ---------- */
+.fields{align-items:end;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.field select,.field input:not([type=checkbox]){width:100%;min-width:0}
+.field input[type=color]{height:42px}
+.fields .check{grid-column:1/-1;min-height:30px}
+.field input:not([type=checkbox]):not([type=color]):not([type=file]),.field select{height:42px;box-sizing:border-box}
+.field>span:first-child{line-height:1.3}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -394,7 +418,11 @@ details.help .hint{margin-top:6px}
       </div>
       <button class="btn" id="preBtn" data-act="pre" hidden>Start pre-game clock</button>
       <button class="startbtn" id="startBtn" data-act="clock">Start clock</button>
-      <button class="bigbtn arrowbtn" data-act="arrow" id="arrowBtn"><span class="bb-main">Flip arrow</span><span class="bb-sub" id="arrowSub">Not set</span></button>
+      <div class="arrowgroup" id="arrowGroup">
+        <button class="bigbtn arrowbtn arrow-end" data-act="arrowset" data-side="home" id="arrowL" aria-label="Arrow to home team" title="Arrow to home team"><svg viewBox="0 0 100 50" aria-hidden="true"><polygon points="100,16 42,16 42,0 0,25 42,50 42,34 100,34"/></svg></button>
+        <button class="bigbtn arrowbtn" data-act="arrow" id="arrowBtn"><span class="bb-main">Flip arrow</span><span class="bb-sub" id="arrowSub">Not set</span></button>
+        <button class="bigbtn arrowbtn arrow-end" data-act="arrowset" data-side="away" id="arrowR" aria-label="Arrow to away team" title="Arrow to away team"><svg viewBox="0 0 100 50" aria-hidden="true"><polygon points="0,16 58,16 58,0 100,25 58,50 58,34 0,34"/></svg></button>
+      </div>
       <button class="bigbtn nextbtn" data-act="next" id="nextBtn">Next period</button>
       <p class="sub" id="shotSub">Shot clock</p>
       <div class="row r2" id="shotRow">
@@ -438,11 +466,11 @@ details.help .hint{margin-top:6px}
     <div class="fields">
       <label class="field">Home name<input id="s-home-name" maxlength="24"></label>
       <label class="field">Home color<input type="color" id="s-home-color"></label>
-      <div class="field full"><span>Home logo</span><div class="logo-row"><img class="logo-prev" id="s-home-logo-prev" alt="" hidden><label class="btn small filebtn">Choose image<input type="file" accept="image/*" id="s-home-logo" hidden></label><button class="btn small" type="button" id="s-home-logo-del">Remove logo</button></div></div>
+      <div class="field full"><span>Home logo</span><div class="logo-row"><img class="logo-prev" id="s-home-logo-prev" alt="" hidden><button class="btn small" type="button" id="s-home-logo-lib">Logo library</button><label class="btn small filebtn">Choose image<input type="file" accept="image/*" id="s-home-logo" hidden></label><button class="btn small" type="button" id="s-home-logo-del">Remove logo</button></div><div class="logo-sugg" id="s-home-logo-sugg" hidden></div></div>
       <label class="field full">Home player numbers<input id="s-home-roster" placeholder="4, 5, 6, 7"></label>
       <label class="field">Away name<input id="s-away-name" maxlength="24"></label>
       <label class="field">Away color<input type="color" id="s-away-color"></label>
-      <div class="field full"><span>Away logo</span><div class="logo-row"><img class="logo-prev" id="s-away-logo-prev" alt="" hidden><label class="btn small filebtn">Choose image<input type="file" accept="image/*" id="s-away-logo" hidden></label><button class="btn small" type="button" id="s-away-logo-del">Remove logo</button></div></div>
+      <div class="field full"><span>Away logo</span><div class="logo-row"><img class="logo-prev" id="s-away-logo-prev" alt="" hidden><button class="btn small" type="button" id="s-away-logo-lib">Logo library</button><label class="btn small filebtn">Choose image<input type="file" accept="image/*" id="s-away-logo" hidden></label><button class="btn small" type="button" id="s-away-logo-del">Remove logo</button></div><div class="logo-sugg" id="s-away-logo-sugg" hidden></div></div>
       <label class="field full">Away player numbers<input id="s-away-roster" placeholder="4, 5, 6, 7"></label>
     </div>
     <h3>Game</h3>
@@ -460,7 +488,7 @@ details.help .hint{margin-top:6px}
       </label>
       <label class="field">Overtime length (min)<input type="number" id="s-ot" min="1" max="20" step="0.5"></label>
       <label class="field">Timeouts
-        <select id="s-tomode"><option value="fiba">FIBA: 2 first half, 3 second half</option><option value="game">Fixed number per game</option></select>
+        <select id="s-tomode"><option value="fiba">FIBA (2 + 3 per half)</option><option value="game">Fixed number per game</option></select>
       </label>
       <label class="field" id="toWrap">Timeouts per game<input type="number" id="s-topg" min="0" max="10"></label>
       <label class="field">Free throws from team foul number<input type="number" id="s-bonus" min="1" max="15"></label>
@@ -538,6 +566,16 @@ details.help .hint{margin-top:6px}
   </div>
 </dialog>
 
+<dialog id="libDlg" aria-labelledby="libTitle">
+  <div class="dlg-body">
+    <h2 id="libTitle">Logo library</h2>
+    <input class="tin" id="libFilter" placeholder="Search by name" autocomplete="off" aria-label="Search logos by name">
+    <div class="lib-grid" id="libGrid"></div>
+    <details class="help"><summary aria-label="Ohje">?</summary><p class="hint">Logos are loaded from the <kbd>logos</kbd> folder in your GitHub repository, next to the page file. Add image files there (PNG, JPG, WebP or SVG) and name them after the team, for example <kbd>espoon-basket.png</kbd>, and the app suggests the logo automatically when the team name matches. The library works on the GitHub page, not inside Claude.</p></details>
+  </div>
+  <div class="dlg-foot"><span></span><div class="right"><button class="btn" id="libClose">Close</button></div></div>
+</dialog>
+
 <dialog id="helpDlg" aria-labelledby="helpTitle">
   <div class="dlg-body help-body">
     <h2 id="helpTitle">Help</h2>
@@ -546,7 +584,8 @@ details.help .hint{margin-top:6px}
       <li><kbd>Space</kbd> start or stop the clock</li>
       <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> home points, <kbd>8</kbd> <kbd>9</kbd> <kbd>0</kbd> away points</li>
       <li><kbd>S</kbd> shot clock 24, <kbd>D</kbd> shot clock 14</li>
-      <li><kbd>A</kbd> flip possession arrow, <kbd>Z</kbd> undo, <kbd>F</kbd> fullscreen here</li>
+      <li><kbd>←</kbd> arrow to home team, <kbd>→</kbd> arrow to away team, <kbd>A</kbd> flip arrow</li>
+      <li><kbd>Z</kbd> undo, <kbd>F</kbd> fullscreen here</li>
     </ul>
     <h3>Display window</h3>
     <p>Open the display window, drag it to the TV or projector and press Fullscreen. If the window doesn’t open, open this page’s link in another browser window and add <kbd>#display</kbd> to the end of the address. If you reload the control page, open the display window again.</p>
@@ -802,6 +841,7 @@ function setPeriod(p){
   evPush('per',null);
   toast(periodName()+', clock reset. Check fouls and time.');logE('Period set manually: '+periodName(),true);commit();
 }
+function setArrow(side){if(S.arrow===side)return;pushHist('Arrow');S.arrow=side;logE('Possession arrow: '+nm(side));commit();}
 function flipArrow(){pushHist('Arrow');S.arrow=S.arrow==='home'?'away':'home';logE('Possession arrow: '+nm(S.arrow));commit();}
 function newGame(){H=[];S=defState(CFG);evPush('per',null);logE('New game: '+nm('home')+' – '+nm('away'),true);commit();toast('New game');}
 
@@ -929,7 +969,8 @@ function renderAll(){
     }).join(''):'<span class="empty-roster">Add player numbers with Edit players.</span>';
   });
   $('arrowSub').textContent=S.arrow==='home'?'← '+nm('home'):(S.arrow==='away'?nm('away')+' →':(S.started?'Set the arrow!':'Not set'));
-  $('arrowBtn').classList.toggle('needs',!!S.started&&!S.arrow&&!S.over);
+  $('arrowGroup').classList.toggle('needs',!!S.started&&!S.arrow&&!S.over);
+  $('arrowL').classList.toggle('on',S.arrow==='home');$('arrowR').classList.toggle('on',S.arrow==='away');
   $('nextBtn').textContent=S.over?'Start new game':(S.period>=CFG.periods?'End game':'Next period');
   const u=H[H.length-1];$('undoBtn').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
@@ -1006,6 +1047,7 @@ $('controls').addEventListener('click',e=>{
     case 'shot':resetShot(+d.s);break;
     case 'next':askNext();break;
     case 'arrow':flipArrow();break;
+    case 'arrowset':setArrow(d.side);break;
     case 'undo':undo();break;
     case 'pts':addPts(d.team,+d.n);break;
     case 'to':timeout(d.team);break;
@@ -1081,6 +1123,8 @@ document.addEventListener('keydown',e=>{
   else if(k==='d'&&CFG.shotClock)resetShot(14);
   else if(k==='z')undo();
   else if(k==='a')flipArrow();
+  else if(k==='arrowleft'){e.preventDefault();setArrow('home');}
+  else if(k==='arrowright'){e.preventDefault();setArrow('away');}
   else if(k==='f')document.body.classList.contains('display')?exitDisplay():enterDisplay();
   else if(k==='escape'&&document.body.classList.contains('display'))exitDisplay();
 });
@@ -1225,7 +1269,7 @@ $('s-plen').addEventListener('change',syncSettingVisibility);
 $('s-tomode').addEventListener('change',syncSettingVisibility);
 /* Logos */
 const formLogos={home:'',away:''};
-function setLogoPrev(t){setImg($('s-'+t+'-logo-prev'),formLogos[t]);$('s-'+t+'-logo-del').disabled=!formLogos[t];}
+function setLogoPrev(t){setImg($('s-'+t+'-logo-prev'),formLogos[t]);$('s-'+t+'-logo-del').disabled=!formLogos[t];if(formLogos[t])$('s-'+t+'-logo-sugg').hidden=true;}
 function processLogo(file){
   return new Promise((res,rej)=>{
     const fr=new FileReader();
@@ -1285,7 +1329,77 @@ function cleanCfg(o){
   c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;c.trackScorers=!!c.trackScorers;c.stats=!!c.stats;c.autoBreak=c.autoBreak!==false;
   return c;
 }
-$('settingsBtn').addEventListener('click',()=>{fillForm(CFG);disarmNew();renderTplSel();$('tplCode').value='';dlg.showModal();});
+$('settingsBtn').addEventListener('click',()=>{fillForm(CFG);disarmNew();renderTplSel();$('tplCode').value='';dlg.showModal();TEAMS.forEach(updateSugg);});
+
+/* Logo library (logos/ folder next to the page) */
+let LIB=null,libLoading=null,libTeam='home';
+const IMG_RE=/\.(png|jpe?g|webp|svg|gif)$/i;
+const normName=v=>String(v||'').toLowerCase().replace(/\.[a-z0-9]+$/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+function libBase(){try{return new URL('.',location.href).href;}catch(e){return '';}}
+function loadLib(){
+  if(LIB)return Promise.resolve(LIB);
+  if(libLoading)return libLoading;
+  libLoading=(async()=>{
+    const base=libBase();let files=[];
+    try{const r=await fetch(base+'logos/logos.json',{cache:'no-cache'});if(r.ok){const j=await r.json();if(Array.isArray(j))files=j.filter(f=>typeof f==='string'&&IMG_RE.test(f));}}catch(e){}
+    if(!files.length&&/\.github\.io$/i.test(location.hostname)){
+      const owner=location.hostname.split('.')[0],seg=location.pathname.split('/').filter(Boolean);
+      const repo=seg.length&&!/\.html?$/i.test(seg[0])?seg[0]:location.hostname;
+      try{const r=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/logos');if(r.ok){const j=await r.json();if(Array.isArray(j))files=j.filter(x=>x&&x.type==='file'&&IMG_RE.test(x.name)).map(x=>x.name);}}catch(e){}
+    }
+    LIB=files.sort((a,b)=>a.localeCompare(b,'fi')).map(f=>({file:f,url:base+'logos/'+encodeURIComponent(f),key:normName(f),label:f.replace(/\.[^.]+$/,'').replace(/[-_]+/g,' ')}));
+    libLoading=null;return LIB;
+  })();
+  return libLoading;
+}
+function findMatch(name){
+  const k=normName(name);if(!k||!LIB)return null;
+  return LIB.find(x=>x.key===k)||LIB.find(x=>x.key.length>=3&&(x.key.startsWith(k)||k.startsWith(x.key)))||null;
+}
+async function useLibLogo(m,t){
+  try{
+    const r=await fetch(m.url);if(!r.ok)throw new Error('http');
+    formLogos[t]=await processLogo(await r.blob());setLogoPrev(t);
+    if($('libDlg').open)$('libDlg').close();
+    toast('Logo chosen: '+m.label+'. Press Save to apply it.');
+  }catch(e){toast('Could not load the logo');}
+}
+async function updateSugg(t){
+  const el=$('s-'+t+'-logo-sugg');el.hidden=true;
+  if(formLogos[t])return;
+  await loadLib();
+  const m=findMatch($('s-'+t+'-name').value);
+  if(!m||formLogos[t])return;
+  el.innerHTML='';
+  const sp=document.createElement('span');sp.textContent='In library: '+m.label;
+  const im=document.createElement('img');im.src=m.url;im.alt='';
+  const b=document.createElement('button');b.type='button';b.className='btn small';b.textContent='Use';b.addEventListener('click',()=>useLibLogo(m,t));
+  el.append(im,sp,b);el.hidden=false;
+}
+function renderLib(){
+  const g=$('libGrid'),f=normName($('libFilter').value);
+  if(!LIB||!LIB.length){g.innerHTML='<p class="hint" style="grid-column:1/-1">No logos found. The logo library works on the GitHub page: add images to the logos folder in your repository.</p>';return;}
+  const items=LIB.filter(x=>!f||x.key.includes(f));
+  g.innerHTML='';
+  if(!items.length){g.innerHTML='<p class="hint" style="grid-column:1/-1">No matches.</p>';return;}
+  items.forEach(m=>{
+    const b=document.createElement('button');b.type='button';b.className='lib-item';
+    const im=document.createElement('img');im.src=m.url;im.alt='';im.loading='lazy';
+    const sp=document.createElement('span');sp.textContent=m.label;
+    b.append(im,sp);b.addEventListener('click',()=>useLibLogo(m,libTeam));g.appendChild(b);
+  });
+}
+async function openLib(t){
+  libTeam=t;$('libFilter').value='';$('libTitle').textContent='Logo library: '+($('s-'+t+'-name').value.trim()||nm(t));
+  $('libGrid').innerHTML='<p class="hint" style="grid-column:1/-1">Loading…</p>';
+  $('libDlg').showModal();await loadLib();renderLib();
+}
+TEAMS.forEach(t=>{
+  $('s-'+t+'-logo-lib').addEventListener('click',()=>openLib(t));
+  $('s-'+t+'-name').addEventListener('input',()=>updateSugg(t));
+});
+$('libFilter').addEventListener('input',renderLib);
+$('libClose').addEventListener('click',()=>$('libDlg').close());
 $('cancelSet').addEventListener('click',()=>dlg.close());
 $('saveSet').addEventListener('click',()=>{
   const oldLen=periodLen(1),notStarted=S.period===1&&!S.clock.running&&S.clock.base===oldLen;
@@ -1309,7 +1423,7 @@ const TPLKEY='bb-scoreboard-en-templates-v1';
 function getTpls(){try{const o=JSON.parse(localStorage.getItem(TPLKEY)||'{}');return o&&typeof o==='object'?o:{};}catch(e){return {};}}
 function setTpls(o){try{localStorage.setItem(TPLKEY,JSON.stringify(o));return true;}catch(e){return false;}}
 function renderTplSel(){
-  const names=Object.keys(getTpls()).sort((a,b)=>a.localeCompare(b,'en'));
+  const names=Object.keys(getTpls()).sort((a,b)=>a.localeCompare(b,'fi'));
   $('tplSel').innerHTML=names.length?names.map(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;return o.outerHTML;}).join(''):'<option value="">No saved templates</option>';
   $('tplLoad').disabled=$('tplDel').disabled=!names.length;
 }
