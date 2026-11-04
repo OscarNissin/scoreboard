@@ -297,6 +297,14 @@ details.help .hint{margin-top:6px}
 .st-table.sheet th:last-child,.st-table.sheet td:last-child{text-align:right}
 #statsDlg{width:min(920px,96vw)}
 #confirmDlg{width:min(480px,94vw)}
+.bigbtn{min-height:58px;border:none;border-radius:11px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 10px;font:700 1.45rem/1.1 "Saira Condensed","Arial Narrow",sans-serif;cursor:pointer;width:100%}
+.bigbtn:hover{filter:brightness(1.08)}
+.bigbtn:active{transform:translateY(1px)}
+.arrowbtn{background:#D2600E}
+.bb-sub{font:500 .9rem/1.2 "IBM Plex Sans","Segoe UI",sans-serif;opacity:.95;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nextbtn{background:var(--focus);min-height:52px;font-size:1.3rem}
+.nextbtn[disabled]{background:var(--btn);color:var(--muted);cursor:default;filter:none;transform:none}
+.nextbtn.next-due{box-shadow:0 0 0 4px color-mix(in srgb,var(--focus) 35%,transparent)}
 #statsDlg .dlg-body{max-height:calc(90vh - 70px)}
 @media (max-width:640px){.st-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -349,15 +357,12 @@ details.help .hint{margin-top:6px}
   <section class="controls" id="controls">
     <div class="panel clockpanel">
       <button class="startbtn" id="startBtn" data-act="clock">Start clock</button>
+      <button class="bigbtn arrowbtn" data-act="arrow" id="arrowBtn"><span class="bb-main">Flip arrow</span><span class="bb-sub" id="arrowSub">Not set</span></button>
+      <button class="bigbtn nextbtn" data-act="next" id="nextBtn">Next period</button>
       <p class="sub" id="shotSub">Shot clock</p>
       <div class="row r2" id="shotRow">
         <button class="btn" data-act="shot" data-s="24">Reset 24</button>
         <button class="btn" data-act="shot" data-s="14">Reset 14</button>
-      </div>
-      <p class="sub">Game</p>
-      <div class="row r2">
-        <button class="btn" data-act="next" id="nextBtn">Next period</button>
-        <button class="btn" data-act="arrow" id="arrowBtn">Set arrow</button>
       </div>
       <button class="btn ghost" data-act="undo" id="undoBtn">Undo</button>
       <details class="more" id="fixBox">
@@ -805,7 +810,7 @@ function renderAll(){
       return '<button class="chip'+cls+'" data-act="foul" data-team="'+t+'" data-p="'+p+'" aria-label="Foul on number '+p+', '+f+' fouls"><span class="num">#'+p+'</span><span class="pf">'+dots+'</span></button>';
     }).join(''):'<span class="empty-roster">Add player numbers with Edit players.</span>';
   });
-  $('arrowBtn').textContent=S.arrow?'Arrow: '+nm(S.arrow):'Set arrow';
+  $('arrowSub').textContent=S.arrow==='home'?'← '+nm('home'):(S.arrow==='away'?nm('away')+' →':'Not set');
   $('nextBtn').textContent=S.over?'Game over':(S.period>=CFG.periods?'End game':'Next period');
   $('nextBtn').disabled=!!S.over;
   const u=H[H.length-1];$('undoBtn').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
