@@ -6,7 +6,7 @@
 <title>Koripallon tulostaulu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style id="mainCss">
 :root{
   --bg:#E9EDF1; --surface:#FFFFFF; --ink:#1A2230; --muted:#5B6676; --line:#CFD6DE;
@@ -31,14 +31,14 @@
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 Barlow,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 "IBM Plex Sans","Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;touch-action:manipulation}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 
 .wrap{max-width:1200px;margin:0 auto;padding:12px 16px 24px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-.top h1{font:700 1.5rem/1 "Barlow Condensed",Barlow,sans-serif;margin:0;letter-spacing:.01em}
+.top h1{font:700 1.5rem/1 "Saira Condensed","Arial Narrow",sans-serif;margin:0;letter-spacing:.01em}
 .top-actions{display:flex;gap:8px}
 
 /* ---------- Board ---------- */
@@ -46,7 +46,7 @@ button{cursor:pointer;touch-action:manipulation}
 .board{
   background:var(--board);border-radius:14px;padding:2.4cqi 2.6cqi 2cqi;
   display:grid;grid-template-columns:.7fr 1fr 1.6fr 1fr .7fr;align-items:start;gap:1.6cqi;
-  font-family:"Barlow Condensed","Arial Narrow",sans-serif;color:var(--led-white);
+  font-family:"Saira Condensed","Arial Narrow",sans-serif;color:var(--led-white);
 }
 .team-b{display:flex;flex-direction:column;align-items:center;min-width:0}
 .tname{font-weight:600;font-size:max(13px,3.4cqi);line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-bottom:.6cqi;border-bottom:.7cqi solid var(--c)}
@@ -108,20 +108,20 @@ button{cursor:pointer;touch-action:manipulation}
 .r2{grid-template-columns:1fr 1fr}
 .r3{grid-template-columns:repeat(3,1fr)}
 .r4{grid-template-columns:repeat(4,1fr)}
-.startbtn{min-height:76px;font:700 1.6rem/1 "Barlow Condensed",Barlow,sans-serif;border:none;border-radius:11px;color:#fff;background:var(--go)}
+.startbtn{min-height:76px;font:700 1.6rem/1 "Saira Condensed","Arial Narrow",sans-serif;border:none;border-radius:11px;color:#fff;background:var(--go)}
 .startbtn.running{background:var(--stop)}
 .startbtn:hover{filter:brightness(1.07);background-color:inherit}
 .startbtn.running:hover{background:var(--stop)} .startbtn:not(.running):hover{background:var(--go)}
 .sub{font-size:.8rem;color:var(--muted);margin:2px 0 -4px}
 
-.tp-head{display:flex;align-items:center;gap:10px;margin:0 0 10px;font:600 1.3rem/1.1 "Barlow Condensed",Barlow,sans-serif}
+.tp-head{display:flex;align-items:center;gap:10px;margin:0 0 10px;font:600 1.3rem/1.1 "Saira Condensed","Arial Narrow",sans-serif}
 .swatch{width:14px;height:28px;border-radius:4px;background:var(--c);flex:none}
 .tp-name{flex:1;min-width:0;font:inherit;color:inherit;background:transparent;border:1px solid transparent;border-radius:6px;padding:3px 6px;margin-left:-6px;text-overflow:ellipsis}
 .tp-name:hover{border-color:var(--line)}
 .tp-name:focus{border-color:var(--focus);background:var(--bg);outline:none}
 .tp-score{font-variant-numeric:tabular-nums;font-size:1.6rem}
 .team-panel[data-team="home"]{--c:var(--home)} .team-panel[data-team="away"]{--c:var(--away)}
-.pts .btn{font:700 1.35rem/1 "Barlow Condensed",Barlow,sans-serif;min-height:58px}
+.pts .btn{font:700 1.35rem/1 "Saira Condensed","Arial Narrow",sans-serif;min-height:58px}
 .pts .minus{font-size:1.1rem;color:var(--muted)}
 .team-panel .row + .row{margin-top:8px}
 .to-left{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}
@@ -129,7 +129,7 @@ button{cursor:pointer;touch-action:manipulation}
 .players{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px}
 .chip{border:1px solid var(--line);background:var(--btn);border-radius:8px;min-height:50px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 .chip:hover{background:var(--btn-hover)}
-.chip .num{font:700 1.15rem/1 "Barlow Condensed",Barlow,sans-serif}
+.chip .num{font:700 1.15rem/1 "Saira Condensed","Arial Narrow",sans-serif}
 .chip .pf{display:flex;gap:2px}
 .chip .pf i{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .chip .pf i.f{background:#F07A12}
@@ -144,13 +144,13 @@ button{cursor:pointer;touch-action:manipulation}
 .team-panel.removing .chip,.team-panel.removing [data-act="foul"]{border:2px dashed var(--stop)}
 .team-panel.removing .rm-btn{background:var(--stop);border-color:var(--stop);color:#fff}
 .numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
-.num-t{min-height:38px;border:1px solid var(--line);background:var(--btn);border-radius:6px;font:600 1rem/1 "Barlow Condensed",Barlow,sans-serif;padding:0}
+.num-t{min-height:38px;border:1px solid var(--line);background:var(--btn);border-radius:6px;font:600 1rem/1 "Saira Condensed","Arial Narrow",sans-serif;padding:0}
 .num-t:hover{background:var(--btn-hover)}
 .num-t.on{background:var(--c);border-color:var(--c);color:var(--on-ink)}
 
 .keys{margin-top:14px;font-size:.82rem;color:var(--muted)}
 .keys + .keys{margin-top:4px}
-.keys kbd{font:600 .78rem/1 Barlow,sans-serif;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:2px 5px;background:var(--surface);color:var(--ink)}
+.keys kbd{font:600 .78rem/1 "IBM Plex Sans","Segoe UI",sans-serif;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:2px 5px;background:var(--surface);color:var(--ink)}
 
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:9px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -159,8 +159,8 @@ button{cursor:pointer;touch-action:manipulation}
 dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:0;width:min(560px,94vw);max-height:90vh}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .dlg-body{padding:18px 20px;overflow:auto;max-height:calc(90vh - 70px)}
-.dlg-body h2{font:700 1.4rem/1 "Barlow Condensed",Barlow,sans-serif;margin:0 0 14px}
-.dlg-body h3{font:600 1.05rem/1.2 Barlow,sans-serif;margin:18px 0 8px}
+.dlg-body h2{font:700 1.4rem/1 "Saira Condensed","Arial Narrow",sans-serif;margin:0 0 14px}
+.dlg-body h3{font:600 1.05rem/1.2 "IBM Plex Sans","Segoe UI",sans-serif;margin:18px 0 8px}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
 .field{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--muted)}
 .field.full{grid-column:1/-1}
@@ -215,10 +215,11 @@ body.screen{cursor:default}
 .board.nopf .plist{display:none}
 .board.nopf .score{font-size:14cqi}
 .board.nopf .gclock{font-size:13cqi}
-.team-panel.nopf .players,.team-panel.nopf .plabel-t,.team-panel.nopf [data-act="roster"]{display:none}
+.team-panel.nopf .players,.team-panel.nopf .plabel{display:none}
+.team-panel.nopf:not(.scorers) [data-act="roster"]{display:none}
 .stack{display:flex;flex-direction:column;gap:10px}
 .setrow{grid-template-columns:1fr auto}
-.tin{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:8px 10px;min-height:46px;font:600 1.05rem/1.2 Barlow,sans-serif;min-width:0;width:100%}
+.tin{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:8px 10px;min-height:46px;font:600 1.05rem/1.2 "IBM Plex Sans","Segoe UI",sans-serif;min-width:0;width:100%}
 .btn.next-due{background:var(--focus);border-color:var(--focus);color:#fff}
 .field textarea{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px;color:var(--ink);font:.9rem/1.35 ui-monospace,Menlo,Consolas,monospace;resize:vertical;min-width:0;word-break:break-all}
 .btnfield{justify-content:flex-end}
@@ -230,6 +231,73 @@ body.screen{cursor:default}
 .log-table th{position:sticky;top:0;background:var(--surface);font-weight:600;color:var(--muted)}
 .log-table tr.sys td{color:var(--muted);font-style:italic}
 #logDlg{width:min(820px,96vw)}
+/* ---------- v2: board ---------- */
+.board .tname{font-weight:600;letter-spacing:.01em}
+.board .period{font-weight:500;letter-spacing:.03em}
+.board .meta{color:#A9A69C;font-weight:400}
+.board .fnum{font-weight:500}
+.board .prow .pn{font-weight:500}
+.board .plist-h{font-weight:400;color:#A9A69C}
+.board .bonus{font-weight:600}
+/* ---------- v2: controls ---------- */
+body{font-size:15px}
+.top h1{font-weight:600}
+.top-actions{flex-wrap:wrap;justify-content:flex-end}
+.btn{min-height:40px;padding:7px 10px;font-weight:500;border-radius:8px;font-size:.95rem}
+.btn.small{min-height:32px;padding:4px 10px;font-size:.85rem;font-weight:500}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{background:var(--btn);color:var(--ink)}
+.btn.round{width:32px;padding:0;border-radius:50%;font-weight:600}
+.startbtn{min-height:58px;font-size:1.45rem}
+.panel{padding:12px}
+.team-panel{border-top:4px solid var(--c)}
+.tp-head{margin-bottom:8px}
+.pts .btn{min-height:54px;font:700 1.5rem/1 "Saira Condensed","Arial Narrow",sans-serif;background:color-mix(in srgb,var(--c) 14%,var(--surface));border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.pts .btn:hover{background:color-mix(in srgb,var(--c) 24%,var(--surface))}
+.team-panel .row + .row,.team-panel .picker + .row{margin-top:8px}
+.chip{min-height:42px}
+.chip .num{font-weight:600}
+.players{grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:5px}
+.plabel{margin:12px 0 6px}
+.tools{display:flex;flex-wrap:wrap;gap:2px 4px;margin-top:12px;padding-top:8px;border-top:1px solid var(--line)}
+.team-panel.removing .rm-btn{background:var(--stop);border-color:var(--stop);color:#fff}
+.sub{font-size:.78rem;margin:2px 0 -4px}
+details.more{border-top:1px solid var(--line);padding-top:6px}
+details.more>summary{cursor:pointer;color:var(--muted);font-size:.85rem;list-style:none;display:flex;align-items:center;gap:6px;padding:4px 0}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"▸";display:inline-block;transition:transform .15s}
+details.more[open]>summary::before{transform:rotate(90deg)}
+details.more>.stack{margin-top:6px}
+details.help{margin:4px 0 0}
+details.help>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:1px solid var(--line);color:var(--muted);font-weight:600;font-size:.85rem}
+details.help>summary::-webkit-details-marker{display:none}
+details.help[open]>summary{background:var(--btn)}
+details.help .hint{margin-top:6px}
+.picker{margin-top:8px;padding:8px;border:1px dashed var(--c);border-radius:8px;background:color-mix(in srgb,var(--c) 8%,var(--surface))}
+.picker-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem;margin-bottom:6px}
+.pnums{display:flex;flex-wrap:wrap;gap:4px}
+.pnums .btn{min-width:42px;font-weight:600}
+.help-body h3{font-size:1rem;margin:16px 0 6px}
+.help-body p,.help-body li{font-size:.92rem;line-height:1.5;margin:4px 0}
+.help-body ul{padding-left:18px;margin:4px 0}
+.tabs{display:flex;gap:4px;margin:0 0 12px;border-bottom:1px solid var(--line)}
+.tab{border:0;background:none;padding:8px 12px;border-bottom:2px solid transparent;color:var(--muted);font-weight:500;cursor:pointer}
+.tab.on{color:var(--ink);border-bottom-color:var(--focus)}
+.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.st-h{display:flex;align-items:center;gap:8px;font-weight:600;font-size:1rem;margin:14px 0 6px}
+.st-h .swatch{height:18px;width:8px}
+.st-wrap{overflow-x:auto}
+.st-table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+.st-table th,.st-table td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.st-table th{color:var(--muted);font-weight:500}
+.st-table th:first-child,.st-table td:first-child{text-align:left}
+.st-table tfoot td{font-weight:600}
+.st-table td.ev{text-align:left;white-space:normal}
+.st-table.sheet th,.st-table.sheet td{text-align:left}
+.st-table.sheet th:last-child,.st-table.sheet td:last-child{text-align:right}
+#statsDlg{width:min(920px,96vw)}
+#statsDlg .dlg-body{max-height:calc(90vh - 70px)}
+@media (max-width:640px){.st-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -239,9 +307,11 @@ body.screen{cursor:default}
     <h1>Tulostaulu</h1>
     <div class="top-actions">
       <button class="btn small" id="popBtn">Avaa näyttöikkuna</button>
-      <button class="btn small" id="displayBtn">Koko näyttö tässä</button>
-      <button class="btn small" id="logBtn">Loki</button>
-      <button class="btn small" id="settingsBtn">Asetukset</button>
+      <button class="btn small ghost" id="displayBtn">Koko näyttö tässä</button>
+      <button class="btn small ghost" id="statsBtn" hidden>Tilastot</button>
+      <button class="btn small ghost" id="logBtn">Loki</button>
+      <button class="btn small ghost" id="settingsBtn">Asetukset</button>
+      <button class="btn small round" id="helpBtn" aria-label="Ohje" title="Ohje">?</button>
     </div>
   </header>
 
@@ -278,44 +348,42 @@ body.screen{cursor:default}
   <section class="controls" id="controls">
     <div class="panel clockpanel">
       <button class="startbtn" id="startBtn" data-act="clock">Käynnistä kello</button>
-      <p class="sub">Pelikello</p>
-      <div class="row r4">
-        <button class="btn" data-act="adj" data-ms="-60000">−1 min</button>
-        <button class="btn" data-act="adj" data-ms="-1000">−1 s</button>
-        <button class="btn" data-act="adj" data-ms="1000">+1 s</button>
-        <button class="btn" data-act="adj" data-ms="60000">+1 min</button>
-      </div>
-      <div class="row setrow">
-        <input class="tin" id="timeIn" inputmode="decimal" autocomplete="off" placeholder="esim. 7:32 tai 45.3" aria-label="Uusi peliaika">
-        <button class="btn" data-act="settime">Aseta aika</button>
-      </div>
       <p class="sub" id="shotSub">Heittokello</p>
-      <div class="stack" id="shotRow">
-        <div class="row r2">
-          <button class="btn" data-act="shot" data-s="24">Palauta 24</button>
-          <button class="btn" data-act="shot" data-s="14">Palauta 14</button>
-        </div>
-        <div class="row setrow">
-          <input class="tin" id="shotIn" inputmode="decimal" autocomplete="off" placeholder="sekunnit" aria-label="Uusi heittokellon aika">
-          <button class="btn" data-act="setshot">Aseta heittokello</button>
-        </div>
+      <div class="row r2" id="shotRow">
+        <button class="btn" data-act="shot" data-s="24">Palauta 24</button>
+        <button class="btn" data-act="shot" data-s="14">Palauta 14</button>
       </div>
       <p class="sub">Peli</p>
       <div class="row r2">
-        <select class="tin" id="periodSel" aria-label="Valitse jakso"></select>
         <button class="btn" data-act="next" id="nextBtn">Seuraava jakso</button>
-      </div>
-      <div class="row r2">
         <button class="btn" data-act="arrow" id="arrowBtn">Aseta nuoli</button>
-        <button class="btn" data-act="undo" id="undoBtn">Kumoa</button>
       </div>
+      <button class="btn ghost" data-act="undo" id="undoBtn">Kumoa</button>
+      <details class="more" id="fixBox">
+        <summary>Kellon ja jakson korjaus</summary>
+        <div class="stack">
+          <select class="tin" id="periodSel" aria-label="Valitse jakso"></select>
+          <div class="row r4">
+            <button class="btn small" data-act="adj" data-ms="-60000">−1 min</button>
+            <button class="btn small" data-act="adj" data-ms="-1000">−1 s</button>
+            <button class="btn small" data-act="adj" data-ms="1000">+1 s</button>
+            <button class="btn small" data-act="adj" data-ms="60000">+1 min</button>
+          </div>
+          <div class="row setrow">
+            <input class="tin" id="timeIn" inputmode="decimal" autocomplete="off" placeholder="esim. 7:32 tai 45.3" aria-label="Uusi peliaika">
+            <button class="btn" data-act="settime">Aseta aika</button>
+          </div>
+          <div class="row setrow" id="shotSetRow">
+            <input class="tin" id="shotIn" inputmode="decimal" autocomplete="off" placeholder="sekunnit" aria-label="Uusi heittokellon aika">
+            <button class="btn" data-act="setshot">Aseta heittokello</button>
+          </div>
+        </div>
+      </details>
     </div>
     <div class="panel team-panel" data-team="home"></div>
     <div class="panel team-panel" data-team="away"></div>
   </section>
 
-  <p class="keys">Pikanäppäimet: <kbd>Välilyönti</kbd> kello käyntiin/seis, <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> kotijoukkueen pisteet, <kbd>8</kbd><kbd>9</kbd><kbd>0</kbd> vierasjoukkueen pisteet, <kbd>S</kbd> heittokello 24, <kbd>D</kbd> heittokello 14, <kbd>Z</kbd> kumoa, <kbd>A</kbd> käännä nuoli, <kbd>F</kbd> koko näyttö tässä.</p>
-  <p class="keys">Eikö näyttöikkuna aukea? Avaa tämän tulostaulun linkki toiseen selainikkunaan ja lisää osoitteen loppuun <kbd>#display</kbd>. Jos lataat tämän ohjaussivun uudelleen, paina Avaa näyttöikkuna uudestaan.</p>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -357,10 +425,12 @@ body.screen{cursor:default}
       <label class="field check full"><input type="checkbox" id="s-pf"> Merkitse virheet pelaajille (pois päältä: vain joukkuevirheet)</label>
       <label class="field check"><input type="checkbox" id="s-shot"> Käytä heittokelloa</label>
       <label class="field check"><input type="checkbox" id="s-sound"> Summeri</label>
+      <label class="field check full"><input type="checkbox" id="s-scorers"> Kysy pisteentekijän pelinumero</label>
+      <label class="field check full"><input type="checkbox" id="s-stats"> Tilastot ja pöytäkirja</label>
     </div>
-    <p class="hint">Jokaisessa jatkoajassa on 1 aikalisä. Joukkuevirheet nollautuvat jokaisen jakson alussa ja jatkuvat jatkoajalle. Uusi jakson pituus tulee voimaan seuraavasta jaksosta, tai heti, jos peli ei ole vielä alkanut.</p>
+    <details class="help"><summary aria-label="Ohje">?</summary><p class="hint">Jokaisessa jatkoajassa on 1 aikalisä. Joukkuevirheet nollautuvat jokaisen jakson alussa ja jatkuvat jatkoajalle. Uusi jakson pituus tulee voimaan seuraavasta jaksosta, tai heti, jos peli ei ole vielä alkanut. Tapahtumat tallentuvat aina; tilastojen asetus näyttää Tilastot-painikkeen.</p></details>
     <h3>Pohjat</h3>
-    <p class="hint" style="margin:0 0 10px">Tallenna lomakkeen asetukset pohjaksi tai siirrä ne toiselle laitteelle koodina. Pohja tai koodi täyttää lomakkeen; ota se käyttöön painamalla Tallenna. Logot tallentuvat pohjiin, mutta eivät siirry koodissa.</p>
+    <details class="help" style="margin:0 0 10px"><summary aria-label="Ohje">?</summary><p class="hint">Tallenna lomakkeen asetukset pohjaksi tai siirrä ne toiselle laitteelle koodina. Pohja tai koodi täyttää lomakkeen; ota se käyttöön painamalla Tallenna. Logot tallentuvat pohjiin, mutta eivät siirry koodissa.</p></details>
     <div class="fields">
       <label class="field">Tallennetut pohjat<select id="tplSel"></select></label>
       <div class="field btnfield"><div class="row r2"><button class="btn small" id="tplLoad">Käytä pohjaa</button><button class="btn small" id="tplDel">Poista pohja</button></div></div>
@@ -392,6 +462,45 @@ body.screen{cursor:default}
   </div>
 </dialog>
 
+<dialog id="helpDlg" aria-labelledby="helpTitle">
+  <div class="dlg-body help-body">
+    <h2 id="helpTitle">Ohje</h2>
+    <h3>Pikanäppäimet</h3>
+    <ul>
+      <li><kbd>Välilyönti</kbd> kello käyntiin tai seis</li>
+      <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> kotijoukkueen pisteet, <kbd>8</kbd> <kbd>9</kbd> <kbd>0</kbd> vierasjoukkueen pisteet</li>
+      <li><kbd>S</kbd> heittokello 24, <kbd>D</kbd> heittokello 14</li>
+      <li><kbd>A</kbd> käännä hallintanuoli, <kbd>Z</kbd> kumoa, <kbd>F</kbd> koko näyttö tässä</li>
+    </ul>
+    <h3>Näyttöikkuna</h3>
+    <p>Avaa näyttöikkuna, vedä se televisioon tai projektorille ja paina Koko näyttö. Jos ikkuna ei aukea, avaa tämän sivun linkki toiseen selainikkunaan ja lisää osoitteen loppuun <kbd>#display</kbd>. Jos lataat ohjaussivun uudelleen, avaa näyttöikkuna uudestaan.</p>
+    <h3>Korjaukset</h3>
+    <p>Kumoa perui viimeisimmän merkinnän. Joukkueen alalaidan painikkeilla voi poistaa pisteen, aikalisän tai virheen myöhemminkin. Kellon, heittokellon ja jakson voi korjata kohdasta Kellon ja jakson korjaus.</p>
+    <h3>Pisteentekijät ja tilastot</h3>
+    <p>Kun pisteentekijät on otettu asetuksista käyttöön, pisteiden jälkeen näytetään pelinumerot. Valitse tekijä tai ohita. Tilastot ja pöytäkirja löytyvät Tilastot-painikkeesta, kun ne on otettu käyttöön.</p>
+    <h3>Loki</h3>
+    <p>Loki tallentaa kaikki tapahtumat kellonaikoineen tähän selaimeen. Jos laite sammuu, sivu jatkaa viimeisimmästä tilanteesta, ja lokista näkee, mitä tapahtui juuri ennen katkosta.</p>
+  </div>
+  <div class="dlg-foot"><span></span><div class="right"><button class="btn primary" id="helpClose">Sulje</button></div></div>
+</dialog>
+
+<dialog id="statsDlg" aria-labelledby="statsTitle">
+  <div class="dlg-body">
+    <h2 id="statsTitle">Tilastot</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-tab="stats" role="tab">Tilastot</button>
+      <button class="tab" data-tab="sheet" role="tab">Pöytäkirja</button>
+    </div>
+    <div id="statsPane"></div>
+    <div id="sheetPane" hidden></div>
+  </div>
+  <div class="dlg-foot"><span></span><div class="right">
+    <button class="btn" id="statsCopy">Kopioi tekstinä</button>
+    <button class="btn" id="statsCsv">Lataa CSV</button>
+    <button class="btn primary" id="statsClose">Sulje</button>
+  </div></div>
+</dialog>
+
 <dialog id="logDlg" aria-labelledby="logTitle">
   <div class="dlg-body">
     <h2 id="logTitle">Loki</h2>
@@ -419,13 +528,13 @@ const DEF_ROSTER='4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15';
 function defCfg(){return{
   home:{name:'Koti',color:'#2B6DE8',roster:DEF_ROSTER,logo:''},
   away:{name:'Vieras',color:'#E2462F',roster:DEF_ROSTER,logo:''},
-  periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true,playerFouls:true
+  periodMin:10,periods:4,otMin:5,shotClock:true,toMode:'fiba',toPerGame:5,bonus:5,foulOut:5,sound:true,playerFouls:true,trackScorers:false,stats:false
 };}
 function periodLen(p,c){c=c||CFG;return Math.round((p<=c.periods?c.periodMin:c.otMin)*60000);}
 function defState(c){return{
   period:1,clock:{running:false,base:periodLen(1,c),startedAt:0},shot:{base:24000,startedAt:0},
   score:{home:0,away:0},teamFouls:{home:0,away:0},players:{home:{},away:{}},
-  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null
+  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null}
 };}
 
 const SCREEN=location.hash==='#display';
@@ -438,6 +547,7 @@ function loadFrom(raw){
       const dc=defCfg();
       CFG=Object.assign(dc,d.CFG,{home:Object.assign(dc.home,d.CFG.home),away:Object.assign(dc.away,d.CFG.away)});
       S=d.S; H=Array.isArray(d.H)?d.H:[];
+      if(!Array.isArray(S.ev))S.ev=[];if(!S.pend)S.pend={home:null,away:null};
       return true;
     }
   }catch(e){}
@@ -446,8 +556,9 @@ function loadFrom(raw){
 try{loadFrom(localStorage.getItem(KEY));}catch(e){}
 if(!CFG)CFG=defCfg();
 if(!S||!S.clock)S=defState(CFG);
+if(!Array.isArray(S.ev))S.ev=[];if(!S.pend)S.pend={home:null,away:null};
 
-function save(){if(SCREEN)return;try{localStorage.setItem(KEY,JSON.stringify({CFG,S,H:H.slice(-50)}))}catch(e){}}
+function save(){if(SCREEN)return;try{localStorage.setItem(KEY,JSON.stringify({CFG,S,H:H.slice(-20)}))}catch(e){}}
 function commit(){save();renderAll();}
 
 /* ---------- Log ---------- */
@@ -515,18 +626,27 @@ function undo(){
   S=prev;toast('Kumottu: '+h.label);logE('Kumottu: '+h.label);commit();
 }
 
+/* ---------- Game events (stats & score sheet) ---------- */
+function evPush(k,tm,x){const e=Object.assign({k,tm,per:S.period,g:gameLeft(),h:S.score.home,a:S.score.away,t:now()},x||{});S.ev.push(e);return S.ev.length-1;}
+function evRemoveLast(test){for(let i=S.ev.length-1;i>=0;i--){if(test(S.ev[i])){S.ev.splice(i,1);TEAMS.forEach(t=>{const p=S.pend[t];if(p!==null){if(p===i)S.pend[t]=null;else if(p>i)S.pend[t]=p-1;}});return true;}}return false;}
+
 /* ---------- Actions ---------- */
 const nm=t=>CFG[t].name;
 function addPts(t,n){
   if(n<0&&S.score[t]===0)return;
   pushHist(nm(t)+' '+(n>0?'+':'−')+Math.abs(n));
-  S.score[t]=Math.max(0,S.score[t]+n);logE(nm(t)+' '+(n>0?'+':'−')+Math.abs(n));commit();
+  S.score[t]=Math.max(0,S.score[t]+n);
+  const ix=evPush('pts',t,{n,p:null});
+  if(n>0&&CFG.trackScorers&&roster(t).length)S.pend[t]=ix;
+  logE(nm(t)+' '+(n>0?'+':'−')+Math.abs(n));commit();
 }
 function foul(t,p){
+  if(p&&(S.players[t][p]||0)>=CFG.foulOut){toast('#'+p+' '+nm(t)+': jo '+CFG.foulOut+' virhettä, ulos pelistä');return;}
   pushHist(p?'Virhe #'+p+' '+nm(t):'Virhe '+nm(t));
   S.teamFouls[t]++;
   if(p){const n=(S.players[t][p]||0)+1;S.players[t][p]=n;if(n===CFG.foulOut)toast('#'+p+' '+nm(t)+': '+n+' virhettä, ulos pelistä');}
   if(S.teamFouls[t]===CFG.bonus-1)toast(nm(t)+': seuraavasta virheestä vapaaheitot');
+  evPush('foul',t,{p:p||null,c:p?S.players[t][p]:null,tf:S.teamFouls[t]});
   logE((p?'Virhe #'+p+' '+nm(t)+' (pelaajalla '+S.players[t][p]+')':'Joukkuevirhe '+nm(t))+', joukkuevirheet '+S.teamFouls[t]);
   commit();
 }
@@ -534,6 +654,7 @@ function timeout(t){
   if(toLeft(t)<=0){toast(nm(t)+': ei aikalisiä jäljellä');return;}
   pushHist('Aikalisä '+nm(t));
   stopClock();const l2=inLast2();S.to[t].used++;if(l2)S.to[t].last2++;
+  evPush('to',t);
   toast('Aikalisä '+nm(t));logE('Aikalisä '+nm(t));commit();
 }
 function nextPeriod(){
@@ -542,6 +663,7 @@ function nextPeriod(){
   if(S.period<=CFG.periods)S.teamFouls={home:0,away:0};
   if(segOf(S.period)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(S.period);S.shot.base=24000;
+  evPush('per',null);
   toast(periodName());logE(periodName()+' alkoi',true);commit();
 }
 function setPeriod(p){
@@ -550,10 +672,11 @@ function setPeriod(p){
   stopClock();const old=segOf(S.period);S.period=p;
   if(segOf(p)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(p);S.shot.base=24000;
+  evPush('per',null);
   toast(periodName()+', kello täynnä. Tarkista virheet ja aika.');logE('Jakso vaihdettu käsin: '+periodName(),true);commit();
 }
 function flipArrow(){pushHist('Nuoli');S.arrow=S.arrow==='home'?'away':'home';logE('Hallintanuoli: '+nm(S.arrow));commit();}
-function newGame(){H=[];S=defState(CFG);logE('Uusi peli: '+nm('home')+' – '+nm('away'),true);commit();toast('Uusi peli');}
+function newGame(){H=[];S=defState(CFG);evPush('per',null);logE('Uusi peli: '+nm('home')+' – '+nm('away'),true);commit();toast('Uusi peli');}
 
 /* ---------- Buzzer ---------- */
 let actx=null;
@@ -623,19 +746,25 @@ function buildTeamPanels(){
   document.querySelectorAll('.team-panel').forEach(el=>{
     const t=el.dataset.team;
     el.innerHTML=
-      '<h2 class="tp-head"><span class="swatch"></span><img class="tp-logo" alt="" hidden><input class="tp-name" data-team="'+t+'" maxlength="24" aria-label="Joukkueen nimi" title="Nimeä uudelleen napauttamalla"><span class="tp-score"></span></h2>'+
-      '<div class="row r4 pts">'+
+      '<h2 class="tp-head"><img class="tp-logo" alt="" hidden><input class="tp-name" data-team="'+t+'" maxlength="24" aria-label="Joukkueen nimi" title="Nimeä uudelleen napauttamalla"><span class="tp-score"></span></h2>'+
+      '<div class="row r3 pts">'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="1">+1</button>'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="2">+2</button>'+
         '<button class="btn" data-act="pts" data-team="'+t+'" data-n="3">+3</button>'+
-        '<button class="btn minus" data-act="pts" data-team="'+t+'" data-n="-1" aria-label="Poista 1 piste">−1</button>'+
       '</div>'+
+      '<div class="picker" hidden><div class="picker-h"><span class="picker-t"></span><button class="btn small ghost" data-act="skipscorer" data-team="'+t+'">Ohita</button></div><div class="pnums"></div></div>'+
       '<div class="row r2">'+
         '<button class="btn" data-act="to" data-team="'+t+'">Aikalisä<span class="to-left"></span></button>'+
         '<button class="btn" data-act="foul" data-team="'+t+'"><span class="foul-lbl">Virhe, ei pelaajaa</span><span class="to-left fouls-left"></span></button>'+
       '</div>'+
-      '<div class="plabel"><span class="plabel-t">Pelaajavirheet: lisää napauttamalla numeroa</span><span class="plabel-b"><button class="btn small" data-act="rmto" data-team="'+t+'">Poista aikalisä</button><button class="btn small rm-btn" data-act="rmfoul" data-team="'+t+'">Poista virhe</button><button class="btn small" data-act="roster" data-team="'+t+'">Muokkaa pelaajia</button></span></div>'+
-      '<div class="players"></div>';
+      '<div class="plabel"><span class="plabel-t">Pelaajavirheet</span></div>'+
+      '<div class="players"></div>'+
+      '<div class="tools">'+
+        '<button class="btn small ghost" data-act="pts" data-team="'+t+'" data-n="-1">−1 piste</button>'+
+        '<button class="btn small ghost" data-act="rmto" data-team="'+t+'">Poista aikalisä</button>'+
+        '<button class="btn small ghost rm-btn" data-act="rmfoul" data-team="'+t+'">Poista virhe</button>'+
+        '<button class="btn small ghost" data-act="roster" data-team="'+t+'">Muokkaa pelaajia</button>'+
+      '</div>';
   });
 }
 
@@ -651,6 +780,13 @@ function renderAll(){
     panel.querySelector('.tp-score').textContent=S.score[t];
     panel.querySelector('.fouls-left').textContent='Joukkuevirheet: '+S.teamFouls[t];
     panel.classList.toggle('nopf',!CFG.playerFouls);
+    panel.classList.toggle('scorers',!!CFG.trackScorers);
+    const pk=panel.querySelector('.picker'),pi=S.pend[t],pe=pi!==null?S.ev[pi]:null;
+    if(pe&&CFG.trackScorers){
+      pk.hidden=false;
+      panel.querySelector('.picker-t').textContent='Kuka teki +'+pe.n+'?';
+      panel.querySelector('.pnums').innerHTML=roster(t).map(p=>'<button class="btn small" data-act="scorer" data-team="'+t+'" data-p="'+p+'">#'+p+'</button>').join('');
+    }else pk.hidden=true;
     panel.querySelector('.foul-lbl').textContent=CFG.playerFouls?'Virhe, ei pelaajaa':'Joukkuevirhe';
     if(!rmMode[t])panel.querySelector('.rm-btn').textContent=CFG.playerFouls?'Poista virhe':'Poista joukkuevirhe';
     panel.querySelector('[data-act="to"] .to-left').textContent=toLeft(t)+' jäljellä';
@@ -665,7 +801,8 @@ function renderAll(){
   $('arrowBtn').textContent=S.arrow?'Nuoli: '+nm(S.arrow):'Aseta nuoli';
   $('nextBtn').textContent=S.period>=CFG.periods?'Aloita jatkoaika':'Seuraava jakso';
   const u=H[H.length-1];$('undoBtn').textContent=u?'Kumoa: '+u.label:'Kumoa';$('undoBtn').disabled=!u;
-  $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';
+  $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
+  $('statsBtn').hidden=!CFG.stats;
   const ps=$('periodSel'),maxP=Math.max(S.period,CFG.periods)+1;let o='';
   for(let p=1;p<=maxP;p++)o+='<option value="'+p+'"'+(p===S.period?' selected':'')+'>'+periodName(p)+'</option>';
   if(document.activeElement!==ps)ps.innerHTML=o;
@@ -677,6 +814,7 @@ function frame(){
     if(gameLeft()<=0){
       const s=shotLeft();S.clock.running=false;S.clock.base=0;S.shot.base=s;buzz();
       const msg=S.period<CFG.periods?periodName()+' päättyi':(S.score.home===S.score.away?'Tasapeli. Seuraavaksi jatkoaika.':'Peli päättyi');
+      evPush('end',null);
       toast(msg);logE(msg,true);commit();
     }else if(CFG.shotClock&&S.shot.base>0&&shotLeft()<=0){
       stopClock();S.shot.base=0;buzz();toast('Heittokellorikkomus');logE('Heittokellorikkomus');commit();
@@ -728,6 +866,8 @@ $('controls').addEventListener('click',e=>{
     case 'foul':if(rmMode[d.team])unfoul(d.team,d.p||null);else foul(d.team,d.p||null);break;
     case 'rmfoul':if(!CFG.playerFouls)unfoul(d.team,null);else setRm(d.team,!rmMode[d.team]);break;
     case 'rmto':unTimeout(d.team);break;
+    case 'scorer':assignScorer(d.team,d.p);break;
+    case 'skipscorer':skipScorer(d.team);break;
     case 'settime':applyTimeIn();break;
     case 'setshot':applyShotIn();break;
     case 'roster':openRoster(d.team);break;
@@ -794,6 +934,15 @@ document.addEventListener('keydown',e=>{
   else if(k==='escape'&&document.body.classList.contains('display'))exitDisplay();
 });
 
+/* Scorer */
+function assignScorer(t,p){
+  const i=S.pend[t];if(i===null||!S.ev[i])return;
+  pushHist('Pisteentekijä #'+p+' '+nm(t));
+  S.ev[i].p=p;S.pend[t]=null;
+  logE('Pisteentekijä #'+p+' '+nm(t)+' (+'+S.ev[i].n+')');commit();
+}
+function skipScorer(t){S.pend[t]=null;commit();}
+
 /* Remove foul */
 const rmMode={home:false,away:false},rmTimer={};
 function setRm(t,on){
@@ -801,7 +950,7 @@ function setRm(t,on){
   const panel=document.querySelector('.team-panel[data-team="'+t+'"]');
   panel.classList.toggle('removing',on);
   panel.querySelector('.rm-btn').textContent=on?'Peruuta':(CFG.playerFouls?'Poista virhe':'Poista joukkuevirhe');
-  panel.querySelector('.plabel-t').textContent=on?'Poista yksi virhe napauttamalla numeroa':'Pelaajavirheet: lisää napauttamalla numeroa';
+  panel.querySelector('.plabel-t').textContent=on?'Napauta numeroa, josta poistetaan virhe':'Pelaajavirheet';
   if(on)rmTimer[t]=setTimeout(()=>setRm(t,false),8000);
 }
 function unfoul(t,p){
@@ -810,6 +959,7 @@ function unfoul(t,p){
   pushHist('Poista virhe '+(p?'#'+p+' ':'')+nm(t));
   if(p)S.players[t][p]--;
   S.teamFouls[t]=Math.max(0,S.teamFouls[t]-1);
+  evRemoveLast(e=>e.k==='foul'&&e.tm===t&&(p?e.p===p:!e.p));
   logE('Virhe poistettu'+(p?': #'+p:'')+' '+nm(t)+', joukkuevirheet '+S.teamFouls[t]);
   setRm(t,false);toast('Virhe poistettu'+(p?': #'+p:'')+', '+nm(t));commit();
 }
@@ -818,6 +968,7 @@ function unTimeout(t){
   if(S.to[t].used<=0){toast(nm(t)+': ei poistettavia aikalisiä tällä puoliajalla');return;}
   pushHist('Poista aikalisä '+nm(t));
   S.to[t].used--;if(S.to[t].last2>0)S.to[t].last2--;
+  evRemoveLast(e=>e.k==='to'&&e.tm===t);
   toast('Aikalisä poistettu, '+nm(t));logE('Aikalisä poistettu: '+nm(t));commit();
 }
 
@@ -903,7 +1054,7 @@ function fillForm(c){
   $('s-periods').value=String(c.periods);$('s-ot').value=c.otMin;
   $('s-tomode').value=c.toMode;$('s-topg').value=c.toPerGame;
   $('s-bonus').value=c.bonus;$('s-foulout').value=c.foulOut;
-  $('s-shot').checked=c.shotClock;$('s-sound').checked=c.sound;$('s-pf').checked=c.playerFouls!==false;
+  $('s-shot').checked=c.shotClock;$('s-sound').checked=c.sound;$('s-pf').checked=c.playerFouls!==false;$('s-scorers').checked=!!c.trackScorers;$('s-stats').checked=!!c.stats;
   syncSettingVisibility();
 }
 function num(id,def,min,max){const v=parseFloat($(id).value);return isFinite(v)?Math.min(max,Math.max(min,v)):def;}
@@ -914,7 +1065,7 @@ function readForm(){
   c.periods=+$('s-periods').value===2?2:4;c.otMin=num('s-ot',CFG.otMin,1,20);
   c.toMode=$('s-tomode').value==='game'?'game':'fiba';c.toPerGame=Math.round(num('s-topg',CFG.toPerGame,0,10));
   c.bonus=Math.round(num('s-bonus',CFG.bonus,1,15));c.foulOut=Math.round(num('s-foulout',CFG.foulOut,1,10));
-  c.shotClock=$('s-shot').checked;c.sound=$('s-sound').checked;c.playerFouls=$('s-pf').checked;
+  c.shotClock=$('s-shot').checked;c.sound=$('s-sound').checked;c.playerFouls=$('s-pf').checked;c.trackScorers=$('s-scorers').checked;c.stats=$('s-stats').checked;
   return c;
 }
 function cleanCfg(o){
@@ -923,7 +1074,7 @@ function cleanCfg(o){
   TEAMS.forEach(t=>{c[t]=Object.assign(defCfg()[t],o[t]||{});c[t].name=String(c[t].name).slice(0,24);c[t].roster=String(c[t].roster);if(!/^#[0-9a-f]{6}$/i.test(c[t].color))c[t].color=defCfg()[t].color;if(!(typeof c[t].logo==='string'&&c[t].logo.startsWith('data:image/')))c[t].logo='';});
   ['periodMin','otMin','toPerGame','bonus','foulOut','periods'].forEach(k=>{c[k]=+c[k];if(!isFinite(c[k]))c[k]=dc[k];});
   c.periods=c.periods===2?2:4;c.toMode=c.toMode==='game'?'game':'fiba';
-  c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;
+  c.shotClock=!!c.shotClock;c.sound=!!c.sound;c.playerFouls=c.playerFouls!==false;c.trackScorers=!!c.trackScorers;c.stats=!!c.stats;
   return c;
 }
 $('settingsBtn').addEventListener('click',()=>{fillForm(CFG);disarmNew();renderTplSel();$('tplCode').value='';dlg.showModal();});
@@ -986,6 +1137,87 @@ $('tplImport').addEventListener('click',()=>{
   if(!c){toast('Koodi ei kelpaa. Tarkista, että koko koodi on mukana.');return;}
   TEAMS.forEach(t=>{if(!c[t].logo)c[t].logo=formLogos[t];});
   fillForm(c);toast('Koodin asetukset lomakkeella. Ota käyttöön painamalla Tallenna.');
+});
+
+/* Help */
+$('helpBtn').addEventListener('click',()=>$('helpDlg').showModal());
+$('helpClose').addEventListener('click',()=>$('helpDlg').close());
+
+/* Stats & score sheet */
+function teamPlayers(t){
+  const set=new Set(roster(t));
+  S.ev.forEach(e=>{if(e.tm===t&&e.p)set.add(e.p);});
+  Object.keys(S.players[t]).forEach(p=>{if(S.players[t][p]>0)set.add(p);});
+  return sortNums([...set]);
+}
+function statsData(){
+  const pl={home:{},away:{}},byPer={home:{},away:{}},other={home:0,away:0};
+  let maxPer=S.period;
+  S.ev.forEach(e=>{
+    if(e.per>maxPer)maxPer=e.per;
+    if(e.k!=='pts')return;
+    byPer[e.tm][e.per]=(byPer[e.tm][e.per]||0)+e.n;
+    if(e.n>0&&e.p){const o=pl[e.tm][e.p]||(pl[e.tm][e.p]={pts:0,1:0,2:0,3:0});o.pts+=e.n;o[e.n]++;}
+    else other[e.tm]+=e.n;
+  });
+  return {pl,byPer,other,maxPer};
+}
+const perShort=p=>p>CFG.periods?'JA'+(p-CFG.periods):String(p);
+function evText(e){
+  if(e.k==='pts')return e.n>0?'+'+e.n:'Korjaus −'+Math.abs(e.n);
+  if(e.k==='foul')return e.p?'Virhe (pelaajan '+e.c+'.)':'Joukkuevirhe';
+  if(e.k==='to')return 'Aikalisä';
+  if(e.k==='per')return periodName(e.per)+' alkoi';
+  if(e.k==='end')return periodName(e.per)+' päättyi';
+  return '';
+}
+function renderStats(){
+  const d=statsData(),pers=[];for(let p=1;p<=d.maxPer;p++)pers.push(p);
+  let h='<div class="st-wrap"><table class="st-table"><thead><tr><th>Jaksot</th>'+pers.map(p=>'<th>'+esc(perShort(p))+'</th>').join('')+'<th>Yht.</th></tr></thead><tbody>';
+  TEAMS.forEach(t=>{h+='<tr><td>'+esc(nm(t))+'</td>'+pers.map(p=>'<td>'+(d.byPer[t][p]||0)+'</td>').join('')+'<td><b>'+S.score[t]+'</b></td></tr>';});
+  h+='</tbody></table></div><div class="st-grid">';
+  TEAMS.forEach(t=>{
+    let rows='',tf=0;
+    teamPlayers(t).forEach(p=>{
+      const o=d.pl[t][p]||{pts:0,1:0,2:0,3:0},f=S.players[t][p]||0;tf+=f;
+      rows+='<tr><td>#'+esc(p)+'</td><td>'+o.pts+'</td><td>'+o[1]+'</td><td>'+o[2]+'</td><td>'+o[3]+'</td><td>'+f+'</td></tr>';
+    });
+    if(d.other[t])rows+='<tr><td>Ei merkitty</td><td>'+d.other[t]+'</td><td></td><td></td><td></td><td></td></tr>';
+    h+='<div><div class="st-h"><span class="swatch" style="background:'+esc(CFG[t].color)+'"></span>'+esc(nm(t))+'</div><div class="st-wrap"><table class="st-table"><thead><tr><th>Nro</th><th>Pisteet</th><th>1p</th><th>2p</th><th>3p</th><th>Virheet</th></tr></thead><tbody>'+rows+
+      '</tbody><tfoot><tr><td>Yhteensä</td><td>'+S.score[t]+'</td><td></td><td></td><td></td><td>'+(CFG.playerFouls?tf:'')+'</td></tr></tfoot></table></div></div>';
+  });
+  h+='</div>';
+  $('statsPane').innerHTML=h;
+  const rows=S.ev.map(e=>'<tr><td>'+esc(periodName(e.per))+'</td><td>'+esc(fmtGame(e.g))+'</td><td>'+(e.tm?esc(nm(e.tm)):'')+'</td><td>'+(e.p?'#'+esc(e.p):'')+'</td><td class="ev">'+esc(evText(e))+'</td><td>'+e.h+'–'+e.a+'</td></tr>').join('');
+  $('sheetPane').innerHTML='<div class="st-wrap"><table class="st-table sheet"><thead><tr><th>Jakso</th><th>Aika</th><th>Joukkue</th><th>Nro</th><th class="ev">Tapahtuma</th><th>Tilanne</th></tr></thead><tbody>'+(rows||'<tr><td colspan="6">Ei vielä tapahtumia.</td></tr>')+'</tbody></table></div>';
+}
+function sheetRows(){return S.ev.map(e=>[periodName(e.per),fmtGame(e.g),e.tm?nm(e.tm):'',e.p?'#'+e.p:'',evText(e),e.h+'–'+e.a]);}
+function statsText(){
+  const d=statsData();let out=nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away')+'\n';
+  TEAMS.forEach(t=>{
+    out+='\n'+nm(t)+'\nNro\tPisteet\t1p\t2p\t3p\tVirheet\n';
+    teamPlayers(t).forEach(p=>{const o=d.pl[t][p]||{pts:0,1:0,2:0,3:0};out+='#'+p+'\t'+o.pts+'\t'+o[1]+'\t'+o[2]+'\t'+o[3]+'\t'+(S.players[t][p]||0)+'\n';});
+    if(d.other[t])out+='Ei merkitty\t'+d.other[t]+'\n';
+  });
+  out+='\nPöytäkirja\nJakso\tAika\tJoukkue\tNro\tTapahtuma\tTilanne\n'+sheetRows().map(r=>r.join('\t')).join('\n');
+  return out;
+}
+$('statsBtn').addEventListener('click',()=>{renderStats();$('statsDlg').showModal();});
+$('statsClose').addEventListener('click',()=>$('statsDlg').close());
+document.querySelectorAll('#statsDlg .tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#statsDlg .tab').forEach(x=>x.classList.toggle('on',x===b));
+  $('statsPane').hidden=b.dataset.tab!=='stats';$('sheetPane').hidden=b.dataset.tab!=='sheet';
+}));
+$('statsCopy').addEventListener('click',()=>{
+  try{navigator.clipboard.writeText(statsText()).then(()=>toast('Tilastot kopioitu'),()=>toast('Kopiointi ei onnistunut tässä selaimessa'));}catch(e){toast('Kopiointi ei onnistunut tässä selaimessa');}
+});
+$('statsCsv').addEventListener('click',()=>{
+  try{
+    const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+    const csv='\ufeff'+[['Jakso','Aika','Joukkue','Nro','Tapahtuma','Tilanne']].concat(sheetRows()).map(r=>r.map(q).join(';')).join('\r\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.download='poytakirja-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();
+  }catch(e){toast('Lataus ei onnistunut. Käytä Kopioi tekstinä.');}
 });
 
 /* Log viewer */
