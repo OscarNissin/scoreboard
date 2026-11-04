@@ -140,7 +140,7 @@ button{cursor:pointer;touch-action:manipulation}
 .chip.out .pf i.f{background:#fff}
 .empty-roster{font-size:.85rem;color:var(--muted);grid-column:1/-1}
 .plabel{flex-wrap:wrap}
-.plabel-b{display:flex;gap:6px;flex:none}
+.plabel-b{display:flex;gap:6px;flex-wrap:wrap;max-width:100%}
 .team-panel.removing .chip,.team-panel.removing [data-act="foul"]{border:2px dashed var(--stop)}
 .team-panel.removing .rm-btn{background:var(--stop);border-color:var(--stop);color:#fff}
 .numgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
@@ -576,7 +576,7 @@ let toastTimer;
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200);}
 
 /* ---------- Rendering ---------- */
-function roster(t){return CFG[t].roster.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).slice(0,20);}
+function roster(t){return sortNums(parseNums(CFG[t].roster)).slice(0,20);}
 function foulClass(f){return f>=CFG.foulOut?'out':(f===CFG.foulOut-1?'warn':(f===0?'zero':''));}
 function boardDocs(){const a=[document];if(popWin&&!popWin.closed){try{a.push(popWin.document);}catch(e){popWin=null;}}else popWin=null;return a;}
 
@@ -634,7 +634,7 @@ function buildTeamPanels(){
         '<button class="btn" data-act="to" data-team="'+t+'">Aikalisä<span class="to-left"></span></button>'+
         '<button class="btn" data-act="foul" data-team="'+t+'"><span class="foul-lbl">Virhe, ei pelaajaa</span><span class="to-left fouls-left"></span></button>'+
       '</div>'+
-      '<div class="plabel"><span class="plabel-t">Pelaajavirheet: lisää napauttamalla numeroa</span><span class="plabel-b"><button class="btn small rm-btn" data-act="rmfoul" data-team="'+t+'">Poista virhe</button><button class="btn small" data-act="roster" data-team="'+t+'">Muokkaa pelaajia</button></span></div>'+
+      '<div class="plabel"><span class="plabel-t">Pelaajavirheet: lisää napauttamalla numeroa</span><span class="plabel-b"><button class="btn small" data-act="rmto" data-team="'+t+'">Poista aikalisä</button><button class="btn small rm-btn" data-act="rmfoul" data-team="'+t+'">Poista virhe</button><button class="btn small" data-act="roster" data-team="'+t+'">Muokkaa pelaajia</button></span></div>'+
       '<div class="players"></div>';
   });
 }
@@ -727,6 +727,7 @@ $('controls').addEventListener('click',e=>{
     case 'to':timeout(d.team);break;
     case 'foul':if(rmMode[d.team])unfoul(d.team,d.p||null);else foul(d.team,d.p||null);break;
     case 'rmfoul':if(!CFG.playerFouls)unfoul(d.team,null);else setRm(d.team,!rmMode[d.team]);break;
+    case 'rmto':unTimeout(d.team);break;
     case 'settime':applyTimeIn();break;
     case 'setshot':applyShotIn();break;
     case 'roster':openRoster(d.team);break;
@@ -811,6 +812,13 @@ function unfoul(t,p){
   S.teamFouls[t]=Math.max(0,S.teamFouls[t]-1);
   logE('Virhe poistettu'+(p?': #'+p:'')+' '+nm(t)+', joukkuevirheet '+S.teamFouls[t]);
   setRm(t,false);toast('Virhe poistettu'+(p?': #'+p:'')+', '+nm(t));commit();
+}
+
+function unTimeout(t){
+  if(S.to[t].used<=0){toast(nm(t)+': ei poistettavia aikalisiä tällä puoliajalla');return;}
+  pushHist('Poista aikalisä '+nm(t));
+  S.to[t].used--;if(S.to[t].last2>0)S.to[t].last2--;
+  toast('Aikalisä poistettu, '+nm(t));logE('Aikalisä poistettu: '+nm(t));commit();
 }
 
 /* Roster editor */
@@ -901,7 +909,7 @@ function fillForm(c){
 function num(id,def,min,max){const v=parseFloat($(id).value);return isFinite(v)?Math.min(max,Math.max(min,v)):def;}
 function readForm(){
   const c=JSON.parse(JSON.stringify(CFG));
-  TEAMS.forEach(t=>{c[t].name=$('s-'+t+'-name').value.trim()||(t==='home'?'Koti':'Vieras');c[t].color=$('s-'+t+'-color').value;c[t].roster=$('s-'+t+'-roster').value;c[t].logo=formLogos[t]||'';});
+  TEAMS.forEach(t=>{c[t].name=$('s-'+t+'-name').value.trim()||(t==='home'?'Koti':'Vieras');c[t].color=$('s-'+t+'-color').value;c[t].roster=sortNums(parseNums($('s-'+t+'-roster').value)).join(', ');c[t].logo=formLogos[t]||'';});
   const pv=$('s-plen').value;c.periodMin=pv==='custom'?num('s-plen-custom',CFG.periodMin,1,60):+pv;
   c.periods=+$('s-periods').value===2?2:4;c.otMin=num('s-ot',CFG.otMin,1,20);
   c.toMode=$('s-tomode').value==='game'?'game':'fiba';c.toPerGame=Math.round(num('s-topg',CFG.toPerGame,0,10));
