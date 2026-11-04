@@ -692,12 +692,13 @@ function timeout(t){
   evPush('to',t);
   toast('Aikalisä '+nm(t));logE('Aikalisä '+nm(t));commit();
 }
-function nextPeriod(){
+function nextPeriod(flip){
   pushHist('Seuraava jakso',true);
   stopClock();const old=segOf(S.period);S.period++;
   if(S.period<=CFG.periods)S.teamFouls={home:0,away:0};
   if(segOf(S.period)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(S.period);S.shot.base=24000;
+  if(flip===true&&S.arrow){S.arrow=S.arrow==='home'?'away':'home';logE('Puoliaika: hallintanuoli käännetty, '+nm(S.arrow));}
   evPush('per',null);
   toast(periodName());logE(periodName()+' alkoi',true);commit();
 }
@@ -987,8 +988,11 @@ function askNext(){
   const left=gameLeft(),warn=left>0?' Jaksossa on vielä aikaa jäljellä ('+fmtGame(left)+').':'';
   if(S.period<CFG.periods){
     const np=S.period+1;
-    ask('Siirrytäänkö seuraavaan jaksoon?',periodName(np)+' alkaa ja kello asetetaan '+fmtGame(periodLen(np))+'. Joukkuevirheet nollautuvat.'+warn,
-      [{label:'Siirry: '+periodName(np),primary:true,fn:nextPeriod}]);
+    const half=np===CFG.periods/2+1;
+    const note=half?' Joukkueet vaihtavat hyökkäyssuuntaa'+(S.arrow?', joten myös hallintanuoli kääntyy.':'.'):'';
+    ask(half?'Puoliaika: siirrytäänkö toiselle puoliajalle?':'Siirrytäänkö seuraavaan jaksoon?',periodName(np)+' alkaa ja kello asetetaan '+fmtGame(periodLen(np))+'. Joukkuevirheet nollautuvat.'+note+warn,
+      half&&S.arrow?[{label:'Siirry kääntämättä',fn:nextPeriod},{label:'Siirry ja käännä nuoli',primary:true,fn:()=>nextPeriod(true)}]
+        :[{label:'Siirry: '+periodName(np),primary:true,fn:nextPeriod}]);
   }else askEnd(warn);
 }
 function askEnd(warn){

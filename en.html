@@ -692,12 +692,13 @@ function timeout(t){
   evPush('to',t);
   toast('Timeout '+nm(t));logE('Timeout '+nm(t));commit();
 }
-function nextPeriod(){
+function nextPeriod(flip){
   pushHist('Next period',true);
   stopClock();const old=segOf(S.period);S.period++;
   if(S.period<=CFG.periods)S.teamFouls={home:0,away:0};
   if(segOf(S.period)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(S.period);S.shot.base=24000;
+  if(flip===true&&S.arrow){S.arrow=S.arrow==='home'?'away':'home';logE('Halftime: possession arrow flipped, '+nm(S.arrow));}
   evPush('per',null);
   toast(periodName());logE(periodName()+' started',true);commit();
 }
@@ -987,8 +988,11 @@ function askNext(){
   const left=gameLeft(),warn=left>0?' There is still time left in the period ('+fmtGame(left)+').':'';
   if(S.period<CFG.periods){
     const np=S.period+1;
-    ask('Go to the next period?',periodName(np)+' starts and the clock is set to '+fmtGame(periodLen(np))+'. Team fouls reset.'+warn,
-      [{label:'Go to '+periodName(np).toLowerCase(),primary:true,fn:nextPeriod}]);
+    const half=np===CFG.periods/2+1;
+    const note=half?' The teams switch attacking directions'+(S.arrow?', so the possession arrow flips too.':'.'):'';
+    ask(half?'Halftime: go to the second half?':'Go to the next period?',periodName(np)+' starts and the clock is set to '+fmtGame(periodLen(np))+'. Team fouls reset.'+note+warn,
+      half&&S.arrow?[{label:'Continue without flipping',fn:nextPeriod},{label:'Continue and flip arrow',primary:true,fn:()=>nextPeriod(true)}]
+        :[{label:'Go to '+periodName(np).toLowerCase(),primary:true,fn:nextPeriod}]);
   }else askEnd(warn);
 }
 function askEnd(warn){
