@@ -296,6 +296,7 @@ details.help .hint{margin-top:6px}
 .st-table.sheet th,.st-table.sheet td{text-align:left}
 .st-table.sheet th:last-child,.st-table.sheet td:last-child{text-align:right}
 #statsDlg{width:min(920px,96vw)}
+#confirmDlg{width:min(480px,94vw)}
 #statsDlg .dlg-body{max-height:calc(90vh - 70px)}
 @media (max-width:640px){.st-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -462,6 +463,11 @@ details.help .hint{margin-top:6px}
   </div>
 </dialog>
 
+<dialog id="confirmDlg" aria-labelledby="cfTitle">
+  <div class="dlg-body"><h2 id="cfTitle"></h2><p id="cfText" style="margin:0;line-height:1.5"></p></div>
+  <div class="dlg-foot"><button class="btn" id="cfCancel">Cancel</button><div class="right" id="cfBtns"></div></div>
+</dialog>
+
 <dialog id="helpDlg" aria-labelledby="helpTitle">
   <div class="dlg-body help-body">
     <h2 id="helpTitle">Help</h2>
@@ -534,7 +540,7 @@ function periodLen(p,c){c=c||CFG;return Math.round((p<=c.periods?c.periodMin:c.o
 function defState(c){return{
   period:1,clock:{running:false,base:periodLen(1,c),startedAt:0},shot:{base:24000,startedAt:0},
   score:{home:0,away:0},teamFouls:{home:0,away:0},players:{home:{},away:{}},
-  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null}
+  to:{home:{used:0,last2:0},away:{used:0,last2:0}},arrow:null,ev:[],pend:{home:null,away:null},over:false
 };}
 
 const SCREEN=location.hash==='#display';
@@ -581,6 +587,7 @@ function stopClock(){if(!S.clock.running)return;const g=gameLeft(),s=shotLeft();
 function rebase(){const g=gameLeft(),s=shotLeft(),t=now();S.clock.base=g;S.shot.base=s;S.clock.startedAt=t;S.shot.startedAt=t;}
 function toggleClock(){
   if(S.clock.running){stopClock();logE('Clock stopped');commit();return;}
+  if(S.over){toast('The game is over. Undo, or start a new game in Settings.');return;}
   if(gameLeft()<=0){toast('The period is over. Press Next period.');return;}
   const t=now();S.clock.running=true;S.clock.startedAt=t;S.shot.startedAt=t;logE('Clock started');commit();
 }
@@ -669,7 +676,7 @@ function nextPeriod(){
 function setPeriod(p){
   if(!(p>=1)||p===S.period)return;
   pushHist('Period changed',true);
-  stopClock();const old=segOf(S.period);S.period=p;
+  stopClock();const old=segOf(S.period);S.period=p;S.over=false;
   if(segOf(p)!==old)S.to={home:{used:0,last2:0},away:{used:0,last2:0}};
   S.clock.base=periodLen(p);S.shot.base=24000;
   evPush('per',null);
@@ -725,7 +732,7 @@ function renderBoard(doc){
       return '<div class="prow '+foulClass(f)+'" aria-label="Number '+p+', '+f+' fouls"><span class="pn">#'+p+'</span><span class="balls">'+bl+'</span></div>';
     }).join('');
   });
-  g('b-period').textContent=isFinal()?'Final':periodName();
+  g('b-period').textContent=S.over?'Final':periodName();
   const ar=g('b-arrow');ar.classList.toggle('set',!!S.arrow);ar.classList.toggle('left',S.arrow==='home');
   doc.__c={};drawBoard(doc);
 }
@@ -799,7 +806,8 @@ function renderAll(){
     }).join(''):'<span class="empty-roster">Add player numbers with Edit players.</span>';
   });
   $('arrowBtn').textContent=S.arrow?'Arrow: '+nm(S.arrow):'Set arrow';
-  $('nextBtn').textContent=S.period>=CFG.periods?'Start overtime':'Next period';
+  $('nextBtn').textContent=S.over?'Game over':(S.period>=CFG.periods?'End game':'Next period');
+  $('nextBtn').disabled=!!S.over;
   const u=H[H.length-1];$('undoBtn').textContent=u?'Undo: '+u.label:'Undo';$('undoBtn').disabled=!u;
   $('shotRow').style.display=CFG.shotClock?'':'none';$('shotSub').style.display=CFG.shotClock?'':'none';$('shotSetRow').style.display=CFG.shotClock?'':'none';
   $('statsBtn').hidden=!CFG.stats;
@@ -813,7 +821,8 @@ function frame(){
   if(!SCREEN&&S.clock.running){
     if(gameLeft()<=0){
       const s=shotLeft();S.clock.running=false;S.clock.base=0;S.shot.base=s;buzz();
-      const msg=S.period<CFG.periods?'End of '+periodName().toLowerCase():(S.score.home===S.score.away?'Tied. Overtime next.':'Final');
+      const msg='End of '+periodName().toLowerCase();
+      if(S.period>=CFG.periods)setTimeout(()=>{if(!S.over&&gameLeft()<=0&&S.period>=CFG.periods)askEnd();},1400);
       evPush('end',null);
       toast(msg);logE(msg,true);commit();
     }else if(CFG.shotClock&&S.shot.base>0&&shotLeft()<=0){
@@ -858,7 +867,7 @@ $('controls').addEventListener('click',e=>{
     case 'clock':toggleClock();break;
     case 'adj':adjustClock(+d.ms);break;
     case 'shot':resetShot(+d.s);break;
-    case 'next':nextPeriod();break;
+    case 'next':askNext();break;
     case 'arrow':flipArrow();break;
     case 'undo':undo();break;
     case 'pts':addPts(d.team,+d.n);break;
@@ -933,6 +942,41 @@ document.addEventListener('keydown',e=>{
   else if(k==='f')document.body.classList.contains('display')?exitDisplay():enterDisplay();
   else if(k==='escape'&&document.body.classList.contains('display'))exitDisplay();
 });
+
+/* Confirmations & game end */
+function ask(title,text,buttons){
+  const d=$('confirmDlg');if(d.open)d.close();
+  $('cfTitle').textContent=title;$('cfText').textContent=text;
+  const box=$('cfBtns');box.innerHTML='';
+  buttons.forEach(b=>{
+    const el=document.createElement('button');el.className='btn'+(b.primary?' primary':'');el.textContent=b.label;
+    el.addEventListener('click',()=>{d.close();b.fn();});box.appendChild(el);
+  });
+  d.showModal();
+  const p=box.querySelector('.primary');if(p)p.focus();
+}
+function askNext(){
+  if(S.over)return;
+  const left=gameLeft(),warn=left>0?' There is still time left in the period ('+fmtGame(left)+').':'';
+  if(S.period<CFG.periods){
+    const np=S.period+1;
+    ask('Go to the next period?',periodName(np)+' starts and the clock is set to '+fmtGame(periodLen(np))+'. Team fouls reset.'+warn,
+      [{label:'Go to '+periodName(np).toLowerCase(),primary:true,fn:nextPeriod}]);
+  }else askEnd(warn);
+}
+function askEnd(warn){
+  if(S.over)return;
+  const tied=S.score.home===S.score.away;
+  ask('End the game?',nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away')+'.'+(tied?' The score is tied, so the game usually goes to overtime.':'')+(warn||''),
+    [{label:'Overtime',primary:tied,fn:nextPeriod},{label:'End game',primary:!tied,fn:endGame}]);
+}
+function endGame(){
+  pushHist('Game ended',true);
+  stopClock();S.over=true;evPush('final',null);
+  logE('Game ended: '+nm('home')+' '+S.score.home+' – '+S.score.away+' '+nm('away'),true);
+  toast('Game ended');commit();
+}
+$('cfCancel').addEventListener('click',()=>$('confirmDlg').close());
 
 /* Scorer */
 function assignScorer(t,p){
@@ -1169,6 +1213,7 @@ function evText(e){
   if(e.k==='to')return 'Timeout';
   if(e.k==='per')return periodName(e.per)+' started';
   if(e.k==='end')return 'End of '+periodName(e.per).toLowerCase();
+  if(e.k==='final')return 'Game ended';
   return '';
 }
 function renderStats(){
