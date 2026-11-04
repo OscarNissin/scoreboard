@@ -685,6 +685,9 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
     <p>Uusi ottelu alkaa ottelua edeltävästä vaiheesta: ottelua edeltävän kellon voi asettaa alkamaan tietyn minuuttimäärän päästä tai tiettyyn kellonaikaan, ja se soi 3 minuuttia ennen alkua ja alussa. Aloita ottelu siirtää jaksoon 1, ja pelikello käynnistetään erikseen, kun peli alkaa. Hallintanuoli on käytössä vasta ottelun alettua. Jakson vaihtuessa käynnistyy taukokello, ja aikalisä käynnistää aikalisäkellon. Ne näkyvät taululla pelikellon paikalla, ja pelikello näkyy pienenä alla. Summeri soi, kun aika loppuu. Pelikellon käynnistys lopettaa tauon tai aikalisän. Taukokellon voi pysäyttää ja säätää, ja ottelua edeltävän kellon voi asettaa päättymään tiettyyn kellonaikaan (Alkaa klo). Kun taukokello on käynnissä, välilyönti pysäyttää tai jatkaa taukokelloa eikä käynnistä pelikelloa. Pituudet säädetään asetuksista.</p>
     <h3>Hallintanuoli</h3>
     <p>Jos pelikello käynnistetään ensimmäisen kerran eikä nuolta ole asetettu, nuoli vilkkuu kunnes se asetetaan.</p>
+    <h3>Offline-käyttö</h3>
+    <p>Kun sivu on kerran avattu verkkoyhteyden ollessa päällä, selain tallentaa sovelluksen. Sen jälkeen sovellus aukeaa ja latautuu uudelleen myös ilman verkkoa. Kaikki pelin aikainen toiminta, kuten kellot, summeri, pisteet, virheet, tilastot, loki ja näyttöikkuna, toimii ilman verkkoa. Kun verkko puuttuu, otsikon viereen tulee merkki "Ei verkkoyhteyttä".</p>
+    <p>Ilman verkkoa eivät toimi logokirjaston päivitys ja päivitysten tarkistus. Avaa sivu ennen ottelua kerran netin ollessa päällä sillä laitteella, jota hallissa käytetään. Sovelluksen voi myös asentaa omaksi sovellukseksi: Chromessa ja Edgessä osoiterivin asennuskuvakkeesta, Safarissa valinnalla Jaa → Lisää Koti-valikkoon. Offline-tuki toimii GitHub-sivulla.</p>
     <h3>Loki</h3>
     <p>Loki tallentaa kaikki tapahtumat kellonaikoineen tähän selaimeen. Jos laite sammuu, sivu jatkaa viimeisimmästä tilanteesta, ja lokista näkee, mitä tapahtui juuri ennen katkosta.</p>
   </div>
@@ -728,8 +731,9 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 <script>
 (function(){
 /*CHANGELOG_START*/
-const APP_VERSION='1.12.0';
+const APP_VERSION='1.12.1';
 const CHANGELOG=[
+ {v:'1.12.1',d:'2026-11-04',i:['Ohjeeseen selitys offline-käytöstä']},
  {v:'1.12.0',d:'2026-11-04',i:['Versiohistoria ja versionumero asetusten alalaitaan','Päivitysten tarkistus: kertoo, jos GitHubissa on uudempi versio']},
  {v:'1.11.0',d:'2026-11-04',i:['Offline-tuki: sovellus aukeaa ja latautuu uudelleen ilman verkkoa','Sovelluksen voi asentaa koneelle tai tabletille','Ilmoitus, kun verkkoyhteys puuttuu']},
  {v:'1.10.0',d:'2026-11-04',i:['Varmistus, jos ottelu aloitetaan ottelua edeltävän ajan ollessa kesken','Varmistus, jos pelikello käynnistetään aikalisän tai tauon aikana','Kello ja summeri toimivat myös, kun ohjausikkuna on taustalla','Näyttöikkuna päivittää itseään itsenäisesti','Summerin testaus asetuksissa, voimakkaampi summeri']},

@@ -1,5 +1,5 @@
 /* Tulostaulu – offline-tuki (service worker). Päivitä CACHE-versio, jos haluat pakottaa uuden välimuistin. */
-const CACHE='tulostaulu-1.12.0';
+const CACHE='tulostaulu-1.12.1';
 const CORE=['./','./index.html','./en.html','./manifest.webmanifest','./manifest-en.webmanifest','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',e=>{

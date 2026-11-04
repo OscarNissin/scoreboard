@@ -2,6 +2,9 @@
 
 Kaikki merkittävät muutokset kirjataan tähän tiedostoon. Versiot noudattavat semanttista versiointia (PÄÄ.SIVU.KORJAUS). Sama historia näkyy sovelluksessa asetussivun alalaidasta.
 
+## 1.12.1 – 2026-11-04
+- Ohjeeseen selitys offline-käytöstä
+
 ## 1.12.0 – 2026-11-04
 - Versiohistoria ja versionumero asetusten alalaitaan
 - Päivitysten tarkistus: kertoo, jos GitHubissa on uudempi versio

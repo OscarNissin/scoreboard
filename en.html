@@ -685,6 +685,9 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
     <p>A new game starts in the pre-game phase: the pre-game clock can be set to end in a number of minutes or at a given time of day, and it sounds 3 minutes before tip-off and at tip-off. Start game moves to period 1, and the game clock is started separately when play begins. The possession arrow is available only once the game has started. A break clock starts when the period changes, and a timeout starts the timeout clock. They show on the board in place of the game clock, with the game clock shown smaller below. The buzzer sounds when time runs out. Starting the game clock ends a break or timeout. The break clock can be paused and adjusted, and the pre-game clock can be set to end at a given time of day (Starts at). While a break clock is running, Space pauses or resumes it and doesn’t start the game clock. Lengths are set in Settings.</p>
     <h3>Possession arrow</h3>
     <p>If the game clock is started for the first time and the arrow hasn’t been set, the arrow blinks until it’s set.</p>
+    <h3>Offline use</h3>
+    <p>Once the page has been opened with a network connection, the browser saves the app. After that it opens and reloads without a network too. Everything used during a game, such as the clocks, buzzer, points, fouls, stats, log and display window, works offline. When the network is missing, an "Offline" badge appears next to the title.</p>
+    <p>The logo library and the update check don’t work offline. Before a game, open the page once with the network on, on the device used at the venue. The app can also be installed as its own app: in Chrome and Edge from the install icon in the address bar, in Safari with Share → Add to Home Screen. Offline support works on the GitHub page.</p>
     <h3>Log</h3>
     <p>The log saves every event with its time in this browser. If the device shuts down, the page continues from the latest situation, and the log shows what happened right before the break.</p>
   </div>
@@ -728,8 +731,9 @@ body.prephase .team-panel .tools [data-act]:not([data-act="roster"]){opacity:.4;
 <script>
 (function(){
 /*CHANGELOG_START*/
-const APP_VERSION='1.12.0';
+const APP_VERSION='1.12.1';
 const CHANGELOG=[
+ {v:'1.12.1',d:'2026-11-04',i:['Help now explains offline use']},
  {v:'1.12.0',d:'2026-11-04',i:['Version history and version number at the bottom of Settings','Update check: tells you if a newer version is available on GitHub']},
  {v:'1.11.0',d:'2026-11-04',i:['Offline support: the app opens and reloads without a network','The app can be installed on a computer or tablet','Notice when the network connection is missing']},
  {v:'1.10.0',d:'2026-11-04',i:['Confirmation when starting the game while pre-game time remains','Confirmation when starting the game clock during a timeout or break','Clock and buzzer keep working when the control window is in the background','The display window updates itself independently','Buzzer test in Settings, louder buzzer']},

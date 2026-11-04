@@ -4,7 +4,7 @@ Selaimessa toimiva koripallon tulostaulu ja pöytäkirja. Ohjaus yhdellä ikkuna
 
 - Suomenkielinen versio: `index.html`
 - Englanninkielinen versio: `en.html`
-- Nykyinen versio: **1.12.0** (katso [CHANGELOG.md](CHANGELOG.md))
+- Nykyinen versio: **1.12.1** (katso [CHANGELOG.md](CHANGELOG.md))
 
 ## Tiedostot
 
